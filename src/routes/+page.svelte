@@ -17,7 +17,7 @@
 
   <section>
     <h2>Does your job change what you watch?</h2>
-    <p>Some occupations rate certain genres noticeably higher or lower than others...</p>
+    <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group. Filter by genre and occupation to explore.</p>
 
     <button 
       on:click={() => showComparison = !showComparison}
