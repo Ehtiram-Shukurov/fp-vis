@@ -16,13 +16,6 @@
   </header>
 
   <section>
-    <h2>How do you compare?</h2>
-    <p>Pick a movie you've seen and enter your age, gender, and occupation. Your rating gets highlighted on the chart so you can see how it compares to everyone else who rated the same film. The dot sizes show how many people share that rating, bigger means more people. Use the dropdown to switch between age, gender, and occupation on the x-axis.</p>
-    <p>The green dot marks where you land. If others in your group gave the same rating, that dot turns red so you can spot it easily.</p>
-    <CategoricalScatter />
-  </section>
-
-  <section>
     <h2>Does your job change what you watch?</h2>
     <p>Some occupations rate certain genres noticeably higher or lower than others...</p>
 
@@ -58,6 +51,13 @@
     <h2>Does age change what you enjoy?</h2>
     <p>Genre preferences shift a lot across age groups. Film-Noir ratings climb steadily from under 3.0 for the youngest users to 4.0 for the oldest. Horror goes the other way. Toggle genres below to compare.</p>
     <AgeGenreChart />
+  </section>
+  
+    <section>
+    <h2>How do you compare?</h2>
+    <p>Pick a movie you've seen and enter your age, gender, and occupation. Your rating gets highlighted on the chart so you can see how it compares to everyone else who rated the same film. The dot sizes show how many people share that rating, bigger means more people. Use the dropdown to switch between age, gender, and occupation on the x-axis.</p>
+    <p>The green dot marks where you land. If others in your group gave the same rating, that dot turns red so you can spot it easily.</p>
+    <CategoricalScatter />
   </section>
 
   <footer>
