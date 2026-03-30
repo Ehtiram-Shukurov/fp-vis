@@ -1,8 +1,8 @@
 <script>
+//@ts-nocheck
 	import { onMount } from 'svelte'
-  import * as d3 from "d3";
-    import { derived } from 'svelte/store';
-    import Page from '../../routes/+page.svelte';
+  import * as d3 from "d3"
+  import { derived } from 'svelte/store';
 
 	let allRatings = $state([]);
 	let movies = $state({});
@@ -18,7 +18,8 @@
 
 	onMount(async () => {
 		try {
-			const ratingsRes = await fetch('/u.data')
+      const base = import.meta.env.BASE_URL
+			const ratingsRes = await fetch(`${base}u.data`)
 			const ratingsText = await ratingsRes.text()
 			allRatings = ratingsText.trim().split('\n').map(line => {
 				const parts = line.split('\t')
@@ -29,7 +30,7 @@
 				}
 			})
 
-			const itemsRes = await fetch('/u.item')
+			const itemsRes = await fetch(`${base}u.item`)
 			const itemsText = await itemsRes.text()
 			itemsText.trim().split('\n').forEach(line => {
 				const parts = line.split('|')
@@ -44,7 +45,7 @@
 				movies[id] = { id, title, genres }
 			})
 
-			const usersRes = await fetch('/u.user')
+			const usersRes = await fetch(`${base}u.user`)
 			const usersText = await usersRes.text()
 			usersText.trim().split('\n').forEach(line => {
 				const parts = line.split('|')
@@ -127,7 +128,7 @@
     let xAxis = $state("Age");
 
     let height=500;
-    let width= $derived(xAxis === "Occupation" ? 1200 : 600);
+    let width= $derived(xAxis === "Occupation" ? 1200 : 900);
     
     const usableArea = $derived({
         top: margin.top,
@@ -194,14 +195,7 @@
       <p style="color: red;">{error}</p>
     </div>
   {:else}
-    <h2>*!Directions for Below(categorical scatterplot)!*</h2>
-    <p>This visualization is designed to visualize and get the reader to think about their own life/demographics growing up and how this may have affected them. Below are a series of selection boxes. First off, we would prompt the reader to choose any movie they have seen/are interested in with the first drop down menu. Then we would ask the reader to input some of their demographic information as well as their personal rating for that movie in the following selection boxes.</p>
-    <p>Once a movie is selected then the data for that movie will appear on the categorical scatterplot. After the rest of the demographic info is filled in, their personal rating will be highlighted on the screen to help them compare to the surround ratings/demographics. The reader can choose the x-axis with the "Select an attribute to compare over" dropdown in order to consider the three different demographic attributes. </p>
-    <p>Our highlighting is done in two parts: first - if there is a circle already created for the same infromation the user provided then the color is changed to red in order to highlight. Second - a different green circle is created on top of the red circle (but smaller) which emphasizes the highlight as well as provides a separate marker to look at if there is no ratings in the dataset with the same demographics.(in this case you would only see the green circle, not the red circle.)</p>
-    <p>On top of each circle is a number which is just the numerical value of ratings that are the same rating+demographic attribute for that movie. The size of the dots also communicates this more effectively/interestingly.</p>
-    <p>Story Wise, we plan to explore the dataset and make the reader think about how their culture/different demographics may have affected their lives to lead to them enjoying certain movies over others (or not). It is a very complex topic so we just want to try to make this reader think about what in their lives may have caused them to like certain movies over others(and if similar occupations for example may have chose that occupation/liked the same movies because of shared cultural experiences). This visualization just provides them with a direct comparison of a small collection of demographic attributes.</p>
     <div class="border">
-      <h1>Categorical Scatterplot and How You Compare!</h1>
       <label for="movie">Movie:</label>
       <select id="movie" bind:value={selectedMovieId}>
         <option value="">-- select a movie --</option>
@@ -289,17 +283,18 @@
                 x={xScale(point.dataCategory) + xScale.bandwidth() / 2}
                 y={yScale(String(point.userRating)) + yScale.bandwidth() / 2 - (0.4 * point.count + 6)} 
                 text-anchor="middle"
-                dominant-baseline="middle">
+                dominant-baseline="middle"
+                fill="#e2e8f0">
                 {point.count}
               </text>
             {/each}
 
             {#each ["1", "2", "3", "4", "5"] as yMark}
-              <text x={usableArea.left - 10} y={yScale(yMark) + yScale.bandwidth() / 2} dominant-baseline="middle">{yMark}</text>
+              <text x={usableArea.left - 10} y={yScale(yMark) + yScale.bandwidth() / 2} dominant-baseline="middle" fill="#94a3b8">{yMark}</text>
             {/each}
 
             {#each xAxisCategories as xMark}
-              <text x={xScale(xMark) + xScale.bandwidth() / 2} y={usableArea.bottom} text-anchor="middle" transform="rotate(-45, {xScale(xMark) + xScale.bandwidth() / 2}, {usableArea.bottom})">{xMark}</text>
+              <text x={xScale(xMark) + xScale.bandwidth() / 2} y={usableArea.bottom} text-anchor="middle" transform="rotate(-45, {xScale(xMark) + xScale.bandwidth() / 2}, {usableArea.bottom})" fill="#94a3b8">{xMark}</text>
             {/each}
 
             <line 
@@ -307,7 +302,7 @@
               x2={usableArea.left+8}
               y1={usableArea.top}
               y2={usableArea.bottom}
-              stroke="black"
+              stroke="#2d3748"
               stroke-width="1"
             ></line>
 
@@ -320,22 +315,36 @@
 
 
 <style>
-.totalcenter{
+.totalcenter {
   display: flex;
-  justify-content: center;
   flex-direction: column;
-  align-items: center;
 }
 
-.center{
+.center {
   display: flex;
-  justify-content: center;
   flex-direction: column;
-  align-items: center;
 }
 
-.border{
-  border: 2px solid black;
-  background-color: rgb(189, 189, 189);
+.border {
+  border: 1px solid #1e2530;
+  background-color: transparent;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+select {
+  background: #1e2530;
+  color: #e2e8f0;
+  border: 1px solid #2d3748;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+label {
+  color: #94a3b8;
+}
+
+p {
+  color: #64748b;
 }
 </style>

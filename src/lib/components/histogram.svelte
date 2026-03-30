@@ -1,5 +1,7 @@
 <script>
+// @ts-nocheck
 	import { onMount } from 'svelte'
+	const base = import.meta.env.BASE_URL
 
 	let allRatings = []
 	let movies = {}
@@ -15,7 +17,7 @@
 
 	onMount(async () => {
 		try {
-			const ratingsRes = await fetch('/u.data')
+			const ratingsRes = await fetch(`${base}u.data`)
 			const ratingsText = await ratingsRes.text()
 			allRatings = ratingsText.trim().split('\n').map(line => {
 				const parts = line.split('\t')
@@ -26,7 +28,7 @@
 				}
 			})
 
-			const itemsRes = await fetch('/u.item')
+			const itemsRes = await fetch(`${base}u.item`)
 			const itemsText = await itemsRes.text()
 			itemsText.trim().split('\n').forEach(line => {
 				const parts = line.split('|')
@@ -41,7 +43,7 @@
 				movies[id] = { id, title, genres }
 			})
 
-			const usersRes = await fetch('/u.user')
+			const usersRes = await fetch(`${base}u.user`)
 			const usersText = await usersRes.text()
 			usersText.trim().split('\n').forEach(line => {
 				const parts = line.split('|')
@@ -129,8 +131,6 @@
 </script>
 
 <div class="container">
-	<h1>Movie Ratings Histogram</h1>
-
 	{#if loading}
 		<p>Loading data...</p>
 	{:else if error}
@@ -208,18 +208,25 @@
 			{#if filteredRatings.length === 0}
 				<p>No ratings found for these filters.</p>
 			{:else}
+			{#key filteredRatings}
 				<div class="histogram">
 					{#each ratingCounts as item}
 						<div class="bar-wrapper">
 							<span class="bar-count">{item.count}</span>
 							<div
 								class="bar"
-								style="height: {(item.count / maxCount) * 250}px; background-color: {item.star <= 2 ? '#e74c3c' : item.star === 3 ? '#f39c12' : '#2ecc71'};"
+								style="
+										height: {(item.count / maxCount) * 250}px;
+										--bar-height: {(item.count / maxCount) * 250}px;
+										background-color: {item.star <= 2 ? '#e74c3c' : item.star === 3 ? '#f39c12' : '#2ecc71'};
+										animation-delay: {(item.star - 1) * 150}ms
+									"
 							></div>
 							<span class="bar-label">{item.star} star</span>
 						</div>
 					{/each}
 				</div>
+				{/key}
 			{/if}
 		</div>
 	{/if}
@@ -227,22 +234,19 @@
 
 <style>
 	.container {
-		max-width: 800px;
-		margin: 0 auto;
 		padding: 20px;
 		font-family: Arial, sans-serif;
-	}
-
-	h1 {
-		color: #333;
-	}
-
+		background: transparent;
+		color: #e2e8f0;
+  }
 	.filters {
-		background-color: #f5f5f5;
+		background-color: #111827;
+		border: 1px solid #1e2530;
 		padding: 15px;
 		border-radius: 5px;
 		margin-bottom: 20px;
-	}
+		color: #94a3b8;
+}
 
 	.filters div {
 		margin-bottom: 10px;
@@ -250,28 +254,36 @@
 
 	.filters label {
 		margin-right: 15px;
+		color: #94a3b8;
 	}
 
 	select {
 		padding: 5px;
 		margin-left: 5px;
+		background: #1e2530;
+		color: #e2e8f0;
+		border: 1px solid #2d3748;
+		border-radius: 4px;
 	}
 
 	hr {
 		margin: 10px 0;
+		border-color: #1e2530;
 	}
 
 	.chart-area {
-		border: 1px solid #ccc;
+		border: 1px solid #1e2530;
 		padding: 20px;
 		border-radius: 5px;
+		background: transparent;
+		color: #64748b;
 	}
 
 	.histogram {
 		display: flex;
 		align-items: flex-end;
 		gap: 20px;
-		height: 300px;
+		height: 350px;
 		padding-top: 30px;
 	}
 
@@ -291,11 +303,21 @@
 	.bar-count {
 		margin-bottom: 5px;
 		font-size: 14px;
-		color: #555;
+		color: #94a3b8;
 	}
 
 	.bar-label {
 		margin-top: 8px;
 		font-size: 13px;
+		color: #64748b;
 	}
+
+	@keyframes grow {
+  from { height: 0; }
+  to   { height: var(--bar-height); }
+}
+
+.bar {
+  animation: grow 0.8s ease-out forwards;
+}
 </style>
