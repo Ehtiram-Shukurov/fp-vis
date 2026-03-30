@@ -2,6 +2,7 @@
   import RatingsHistogram from '$lib/components/histogram.svelte'
   import AgeGenreChart from '$lib/components/AgeGenreChart.svelte'
   import CategoricalScatter from '$lib/components/categoricalScatter.svelte'
+  let showComparison = false;
 </script>
 
 <div class="page">
@@ -17,7 +18,33 @@
   <section>
     <h2>Does your job change what you watch?</h2>
     <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group. Filter by genre and occupation to explore.</p>
-    <RatingsHistogram />
+
+    <button 
+      on:click={() => showComparison = !showComparison}
+      style="
+        background: #111827;
+        color: #94a3b8;
+        border: 1px solid #1e2530;
+        padding: 6px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 20px;
+        font-size: 14px;
+      "
+    >
+      {showComparison ? 'Remove comparison' : '+ Add comparison'}
+    </button>
+
+    <div style="display: flex; gap: 20px;">
+      <div style="flex: 1; min-width: 0;">
+        <RatingsHistogram />
+      </div>
+      {#if showComparison}
+        <div style="flex: 1; min-width: 0;">
+          <RatingsHistogram />
+        </div>
+      {/if}
+    </div>
   </section>
 
   <section>
