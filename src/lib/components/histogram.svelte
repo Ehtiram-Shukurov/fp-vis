@@ -87,7 +87,7 @@
 	})()
 
 	let filterType = "genre"
-	let selectedGenre = "Comedy"
+	let selectedGenre = ""
 	let selectedMovieId = ""
 
 	let selectedAge = "All"
@@ -101,7 +101,7 @@
 		} else {
 			let movie = movies[r.movieId]
 			if (!movie) return false
-			if (!movie.genres.includes(selectedGenre)) return false
+			if (selectedGenre !== "" && !movie.genres.includes(selectedGenre)) return false
 		}
 
 		let user = users[r.userId]
@@ -152,6 +152,7 @@
 				<div>
 					<label for="genre">Genre:</label>
 					<select id="genre" bind:value={selectedGenre}>
+						<option value="">All Genres</option>
 						{#each allGenres as genre}
 							<option value={genre}>{genre}</option>
 						{/each}
