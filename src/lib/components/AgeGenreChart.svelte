@@ -5,10 +5,10 @@
   import { genreColors } from '$lib/genreColors'
 
 	const genreNames = [
-		"Action", "Adventure", "Animation", "Children's", "Comedy",
-		"Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror",
-		"Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"
-	]
+    "unknown", "Action", "Adventure", "Animation", "Children's", "Comedy",
+    "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror",
+    "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"
+]
 
 	const ageBuckets = [
 		{ label: "<18",   min: 0,  max: 17  },
@@ -215,6 +215,7 @@
 
 	<div class="toggles">
 		{#each genreNames as genre}
+		  {#if genre !== 'unknown'}
 			<button
 				onclick={() => toggleGenre(genre)}
 				style="border-color: {selected.includes(genre) ? genreColors[genre] : '#2d3748'};
@@ -222,6 +223,7 @@
 			>
 				{genre}
 			</button>
+			{/if}
 		{/each}
 	</div>
 
