@@ -55,8 +55,6 @@
   
     <section>
     <h2>How do you compare?</h2>
-    <p>Pick a movie you've seen and enter your age, gender, and occupation. Your rating gets highlighted on the chart so you can see how it compares to everyone else who rated the same film. The dot sizes show how many people share that rating, bigger means more people. Use the dropdown to switch between age, gender, and occupation on the x-axis.</p>
-    <p>The green dot marks where you land. If others in your group gave the same rating, that dot turns red so you can spot it easily.</p>
     <CategoricalScatter />
   </section>
 
