@@ -4,15 +4,16 @@
 
   let progress = $state(0);
 
-  const SECTION_SIZE = 100 / 7;
+  const SECTION_SIZE = 100 / 8;
 
   let activeIndex = $derived(
-    Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 6)
+    Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 7)
   );
 
   const sections = [
     {
-      label: "FILLER TEXT",
+      label: "All Genres",
+      description: "Over all movie ratings in the dataset, we see an average rating of 3.5. This distribution is about 1 point above the true middle (2.5), likely because active raters tend to be movie enthusiasts or are influenced by central tendency bias.",
       filterType: "genre",
       selectedGenre: "",
       selectedMovieId: "",
@@ -21,16 +22,28 @@
       selectedOccupation: "All",
     },
     {
-      label: "FILLER TEXT",
+      label: "Children's",
+      description: "With an average of 3.4, this genre notably shows a mode where 3-star and 4-star ratings are almost tied, contrasting the usual trend where 4-star ratings dominate significantly.",
       filterType: "genre",
-      selectedGenre: "Action",
+      selectedGenre: "Children's",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
       selectedOccupation: "All",
     },
     {
-      label: "FILLER TEXT",
+      label: "Documentary",
+      description: "Averaging 3.7, documentaries benefit from a niche audience. Since viewers typically seek out specific topics they already enjoy, the genre avoids the 'casual dislike' often seen in broader categories.",
+      filterType: "genre",
+      selectedGenre: "Documentary",
+      selectedMovieId: "",
+      selectedAge: "All",
+      selectedGender: "All",
+      selectedOccupation: "All",
+    },
+    {
+      label: "Drama",
+      description: "At a 3.7 average, Drama is a heavyweight. As a popular and broad genre, its distribution closely mirrors the shape of the overall dataset, representing a reliable baseline for audience expectations.",
       filterType: "genre",
       selectedGenre: "Drama",
       selectedMovieId: "",
@@ -39,36 +52,40 @@
       selectedOccupation: "All",
     },
     {
-      label: "FILLER TEXT",
+      label: "Fantasy",
+      description: "A lower average of 3.2. This may stem from the 'source material curse'—readers often feel book-to-film adaptations fall short—and the inherent difficulty of executing complex world-building.",
       filterType: "genre",
-      selectedGenre: "Comedy",
+      selectedGenre: "Fantasy",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
       selectedOccupation: "All",
     },
     {
-      label: "FILLER TEXT",
+      label: "Film-Noir",
+      description: "The highest average at 3.9. Much like documentaries, Film-Noir attracts a specific cinephile demographic, resulting in fewer low ratings and a very high concentration of critical acclaim.",
       filterType: "genre",
-      selectedGenre: "Romance",
+      selectedGenre: "Film-Noir",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
       selectedOccupation: "All",
     },
     {
-      label: "FILLER TEXT",
+      label: "Horror",
+      description: "A lower average of 3.3. This is likely tied to the genre's objective: it is designed to provoke unease or fear, a visceral reaction that doesn't always translate to a high numerical comfort rating.",
       filterType: "genre",
-      selectedGenre: "Thriller",
+      selectedGenre: "Horror",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
       selectedOccupation: "All",
     },
     {
-      label: "FILLER TEXT",
+      label: "War",
+      description: "Strong performance with a 3.8 average. The distribution is top-heavy, showing nearly identical counts for 4 and 5-star ratings, indicating high satisfaction among its viewership.",
       filterType: "genre",
-      selectedGenre: "Sci-Fi",
+      selectedGenre: "War",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
@@ -80,9 +97,9 @@
 <Scroll bind:progress>
   {#each sections as section, i}
     <div class="scroll-card" class:active={i === activeIndex}>
-      <span class="step-num">0{i + 1}</span>
+      <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
       <h3>{section.label}</h3>
-      <p>FILLER TEXT FILLER TEXT FILLER TEXT FILLER TEXT FILLER TEXT FILLER TEXT FILLER TEXT.</p>
+      <p>{section.description}</p>
     </div>
   {/each}
 
@@ -102,6 +119,10 @@
 
 <style>
   .scroll-card {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     padding: 28px 0;
     border-bottom: 1px solid #1e2530;
     transition: all 0.3s ease;
@@ -112,12 +133,12 @@
   }
 
   .scroll-card.active p {
-    color: #64748b;
+    color: #94a3b8;
   }
 
   .step-num {
     font-size: 13px;
-    color: #2d3748;
+    color: #4a5568;
     font-weight: 500;
   }
 
@@ -131,16 +152,11 @@
 
   p {
     font-size: 15px;
-    color: #334155;
+    color: #475569;
     line-height: 1.7;
     max-width: 420px;
     margin: 0;
     transition: color 0.3s ease;
-  }
-
-  .footer-card {
-    border-bottom: none;
-    padding-top: 28px;
   }
 
   .viz-wrapper {

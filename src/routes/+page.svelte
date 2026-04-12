@@ -1,16 +1,9 @@
 <script>
-<<<<<<< HEAD
-  import RatingsHistogram from '$lib/components/histogram.svelte'
-  import ScrollyHist from '$lib/components/ScrollyHist.svelte';
-  import AgeGenreChart from '$lib/components/AgeGenreChart.svelte'
-  import CategoricalScatter from '$lib/components/categoricalScatter.svelte'
-=======
   import RatingsHistogram from "$lib/components/histogram.svelte";
   import AgeGenreChart from "$lib/components/AgeGenreChart.svelte";
   import ScrollyHist from "$lib/components/ScrollyHist.svelte";
   import CategoricalScatter from "$lib/components/categoricalScatter.svelte";
   import GlyphChart from "$lib/components/GlyphChart.svelte";
->>>>>>> 9871b6f73532aaa279d3804f9fc4fbb3c5c8ad43
   let showComparison = false;
 </script>
 
@@ -30,17 +23,7 @@
 
   <section>
     <h2>Does your job change what you watch?</h2>
-<<<<<<< HEAD
-    <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group. Filter by genre and occupation to explore.</p>
-    
-    <div style="flex: 1; min-width: 0;">
-      <ScrollyHist />
-    </div>
 
-    <p>Your turn to explore the data</p>
-    <button 
-      on:click={() => showComparison = !showComparison}
-=======
     <p>
       Some occupations rate certain genres noticeably higher or lower than
       others. Healthcare workers tend to rate Horror lower. Lawyers rate it
@@ -56,7 +39,6 @@
 
     <button
       on:click={() => (showComparison = !showComparison)}
->>>>>>> 9871b6f73532aaa279d3804f9fc4fbb3c5c8ad43
       style="
         background: #111827;
         color: #94a3b8;
