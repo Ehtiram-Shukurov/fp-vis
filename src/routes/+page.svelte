@@ -1,5 +1,6 @@
 <script>
   import RatingsHistogram from '$lib/components/histogram.svelte'
+  import ScrollyHist from '$lib/components/ScrollyHist.svelte';
   import AgeGenreChart from '$lib/components/AgeGenreChart.svelte'
   import CategoricalScatter from '$lib/components/categoricalScatter.svelte'
   let showComparison = false;
@@ -18,7 +19,12 @@
   <section>
     <h2>Does your job change what you watch?</h2>
     <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group. Filter by genre and occupation to explore.</p>
+    
+    <div style="flex: 1; min-width: 0;">
+      <ScrollyHist />
+    </div>
 
+    <p>Your turn to explore the data</p>
     <button 
       on:click={() => showComparison = !showComparison}
       style="
