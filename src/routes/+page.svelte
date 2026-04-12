@@ -1,23 +1,36 @@
 <script>
+<<<<<<< HEAD
   import RatingsHistogram from '$lib/components/histogram.svelte'
   import ScrollyHist from '$lib/components/ScrollyHist.svelte';
   import AgeGenreChart from '$lib/components/AgeGenreChart.svelte'
   import CategoricalScatter from '$lib/components/categoricalScatter.svelte'
+=======
+  import RatingsHistogram from "$lib/components/histogram.svelte";
+  import AgeGenreChart from "$lib/components/AgeGenreChart.svelte";
+  import ScrollyHist from "$lib/components/ScrollyHist.svelte";
+  import CategoricalScatter from "$lib/components/categoricalScatter.svelte";
+  import GlyphChart from "$lib/components/GlyphChart.svelte";
+>>>>>>> 9871b6f73532aaa279d3804f9fc4fbb3c5c8ad43
   let showComparison = false;
 </script>
 
 <div class="page">
-
   <header>
     <p class="subtitle">CSCI 5609 · MovieLens 100K · 1997–98</p>
     <h1>Dimension</h1>
-    <p class="question">How does the demographic of users change how they watch movies?</p>
+    <p class="question">
+      How does the demographic of users change how they watch movies?
+    </p>
     <p class="info">100K ratings · 943 users · 1,682 movies · 18 genres</p>
-    <p class="team">Dylan Lyon · Genevieve Gray · Ezra Shukurov · Jake O'Shaughnessy · Max Lalonde</p>
+    <p class="team">
+      Dylan Lyon · Genevieve Gray · Ezra Shukurov · Jake O'Shaughnessy · Max
+      Lalonde
+    </p>
   </header>
 
   <section>
     <h2>Does your job change what you watch?</h2>
+<<<<<<< HEAD
     <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group. Filter by genre and occupation to explore.</p>
     
     <div style="flex: 1; min-width: 0;">
@@ -27,6 +40,23 @@
     <p>Your turn to explore the data</p>
     <button 
       on:click={() => showComparison = !showComparison}
+=======
+    <p>
+      Some occupations rate certain genres noticeably higher or lower than
+      others. Healthcare workers tend to rate Horror lower. Lawyers rate it
+      higher than almost any other group. Filter by genre and occupation to
+      explore.
+    </p>
+
+    <div style="flex: 1; min-width: 0;">
+      <ScrollyHist />
+    </div>
+
+    <p>Explore the data</p>
+
+    <button
+      on:click={() => (showComparison = !showComparison)}
+>>>>>>> 9871b6f73532aaa279d3804f9fc4fbb3c5c8ad43
       style="
         background: #111827;
         color: #94a3b8;
@@ -38,7 +68,7 @@
         font-size: 14px;
       "
     >
-      {showComparison ? 'Remove comparison' : '+ Add comparison'}
+      {showComparison ? "Remove comparison" : "+ Add comparison"}
     </button>
 
     <div style="display: flex; gap: 20px;">
@@ -55,19 +85,37 @@
 
   <section>
     <h2>Does age change what you enjoy?</h2>
-    <p>Genre preferences shift a lot across age groups. Film-Noir ratings climb steadily from under 3.0 for the youngest users to 4.0 for the oldest. Horror goes the other way. Toggle genres below to compare.</p>
+    <p>
+      Genre preferences shift a lot across age groups. Film-Noir ratings climb
+      steadily from under 3.0 for the youngest users to 4.0 for the oldest.
+      Horror goes the other way. Toggle genres below to compare.
+    </p>
     <AgeGenreChart />
   </section>
-  
-    <section>
+
+  <section>
     <h2>How do you compare?</h2>
     <CategoricalScatter />
   </section>
 
-  <footer>
-    <p>Dimension · CSCI 5609 · Spring 2025 · <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 100K dataset</a></p>
-  </footer>
+  <section>
+    <h2>Genre Preference Glyphs</h2>
+    <p>
+      This demographic chart shows average genre ratings by intersection of
+      occupation and age. Longer lines mean higher ratings. Colors represent
+      each different genre.
+    </p>
+    <GlyphChart />
+  </section>
 
+  <footer>
+    <p>
+      Dimension · CSCI 5609 · Spring 2025 · <a
+        href="https://grouplens.org/datasets/movielens/"
+        target="_blank">MovieLens 100K dataset</a
+      >
+    </p>
+  </footer>
 </div>
 
 <style>
