@@ -7,7 +7,7 @@
   let progress = $state(0);
   let showComparison = $state(false);
 
-  const SECTION_SIZE = 100 / 10;
+  const SECTION_SIZE = 100 / 9;
 
   let activeIndex = $derived(
     Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 8)
@@ -94,16 +94,6 @@
       selectedMovieId: "",
       selectedAge: "Under 25",
       selectedGender: "Male",
-      selectedOccupation: "All",
-    },
-    {
-      label: "And here is the disribution of ratings for women under 25 across all genres",
-      description: "",
-      filterType: "genre",
-      selectedGenre: "",
-      selectedMovieId: "",
-      selectedAge: "Under 25",
-      selectedGender: "Female",
       selectedOccupation: "All",
     },
     {
