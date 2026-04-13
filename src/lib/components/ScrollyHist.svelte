@@ -7,7 +7,7 @@
   let progress = $state(0);
   let showComparison = $state(false);
 
-  const SECTION_SIZE = 100 / 9;
+  const SECTION_SIZE = 100 / 8;
 
   let activeIndex = $derived(
     Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 8)
