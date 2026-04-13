@@ -109,7 +109,7 @@
   ];
 </script>
 
-<Scroll bind:progress>
+<Scroll bind:progress debounce={150}>
   {#each sections as section, i}
     <div class="scroll-card" class:active={i === activeIndex}>
       {#if i < 8}
@@ -194,6 +194,7 @@
   .viz-wrapper {
     width: 100%;
     height: 100%;
+    padding-top: 80px;
   }
 
   .explore-wrap {
