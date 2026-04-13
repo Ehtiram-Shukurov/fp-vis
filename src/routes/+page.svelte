@@ -1,104 +1,124 @@
 <script>
-  import RatingsHistogram from "$lib/components/histogram.svelte";
-  import AgeGenreChart from "$lib/components/AgeGenreChart.svelte";
-  import ScrollyHist from "$lib/components/ScrollyHist.svelte";
-  import CategoricalScatter from "$lib/components/categoricalScatter.svelte";
-  import GlyphChart from "$lib/components/GlyphChart.svelte";
-  let showComparison = false;
+  import { onMount } from 'svelte'
+  import { fly } from 'svelte/transition'
+  import Scroll from '$lib/components/Scroll.svelte'
+  import ScrollyHist from '$lib/components/ScrollyHist.svelte'
+  import AgeGenreChart from '$lib/components/AgeGenreChart.svelte'
+  import CategoricalScatter from '$lib/components/categoricalScatter.svelte'
+  import GlyphChart from '$lib/components/GlyphChart.svelte'
+
+  let introProgress = $state(0)
+  let visible = $state([false, false, false, false])
+
+  onMount(() => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        const i = parseInt(e.target.dataset.i)
+        if (e.isIntersecting) {
+          visible[i] = true
+          observer.unobserve(e.target)
+        }
+      })
+    }, { threshold: 0.1 })
+
+    document.querySelectorAll('.section-anchor').forEach(el => observer.observe(el))
+  })
 </script>
 
-<div class="page">
-  <header>
-    <p class="subtitle">CSCI 5609 · MovieLens 100K · 1997–98</p>
-    <h1>Dimension</h1>
-    <p class="question">
-      How does the demographic of users change how they watch movies?
-    </p>
-    <p class="info">100K ratings · 943 users · 1,682 movies · 18 genres</p>
-    <p class="team">
-      Dylan Lyon · Genevieve Gray · Ezra Shukurov · Jake O'Shaughnessy · Max
-      Lalonde
-    </p>
-  </header>
+<!-- intro -->
+<Scroll bind:progress={introProgress} --scrolly-story-width="0">
+  <div id="intro-virtual"></div>
+  <svelte:fragment slot="viz">
+    <div class="intro-hero">
+      <p class="eyebrow">CSCI 5609 · MovieLens 100K · 1997–98</p>
+      <h1>Dimension</h1>
 
-  <section>
-    <h2>Does your job change what you watch?</h2>
+      {#if introProgress > 25}
+        <p class="intro-question" in:fly={{ y: 30, duration: 700 }}>
+          How does the demographic of users change how they watch movies?
+        </p>
+      {/if}
 
-    <p>
-      Some occupations rate certain genres noticeably higher or lower than
-      others. Healthcare workers tend to rate Horror lower. Lawyers rate it
-      higher than almost any other group. Filter by genre and occupation to
-      explore.
-    </p>
+      {#if introProgress > 55}
+        <div class="intro-stats" in:fly={{ y: 20, duration: 600 }}>
+          <span>100K ratings</span>
+          <span>943 users</span>
+          <span>1,682 movies</span>
+          <span>18 genres</span>
+        </div>
+      {/if}
 
-    <div style="flex: 1; min-width: 0;">
-      <ScrollyHist />
-    </div>
+      {#if introProgress > 75}
+        <p class="intro-team" in:fly={{ y: 15, duration: 500 }}>
+          Dylan Lyon · Genevieve Gray · Ezra Shukurov · Jake O'Shaughnessy · Max Lalonde
+        </p>
+      {/if}
 
-    <p>Explore the data</p>
-
-    <button
-      on:click={() => (showComparison = !showComparison)}
-      style="
-        background: #111827;
-        color: #94a3b8;
-        border: 1px solid #1e2530;
-        padding: 6px 14px;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-bottom: 20px;
-        font-size: 14px;
-      "
-    >
-      {showComparison ? "Remove comparison" : "+ Add comparison"}
-    </button>
-
-    <div style="display: flex; gap: 20px;">
-      <div style="flex: 1; min-width: 0;">
-        <RatingsHistogram />
-      </div>
-      {#if showComparison}
-        <div style="flex: 1; min-width: 0;">
-          <RatingsHistogram />
+      {#if introProgress < 15}
+        <div class="scroll-hint">
+          <span>scroll</span>
+          <div class="scroll-arrow"></div>
         </div>
       {/if}
     </div>
-  </section>
+  </svelte:fragment>
+</Scroll>
 
-  <section>
-    <h2>Does age change what you enjoy?</h2>
-    <p>
-      Genre preferences shift a lot across age groups. Film-Noir ratings climb
-      steadily from under 3.0 for the youngest users to 4.0 for the oldest.
-      Horror goes the other way. Toggle genres below to compare.
-    </p>
-    <AgeGenreChart />
-  </section>
-
-  <section>
-    <h2>How do you compare?</h2>
-    <CategoricalScatter />
-  </section>
-
-  <section>
-    <h2>Genre Preference Glyphs</h2>
-    <p>
-      This demographic chart shows average genre ratings by intersection of
-      occupation and age. Longer lines mean higher ratings. Colors represent
-      each different genre.
-    </p>
-    <GlyphChart />
-  </section>
-
-  <footer>
-    <p>
-      Dimension · CSCI 5609 · Spring 2025 · <a
-        href="https://grouplens.org/datasets/movielens/"
-        target="_blank">MovieLens 100K dataset</a
-      >
-    </p>
-  </footer>
+<!-- section 01 — occupation × genre -->
+<div class="section-header">
+  <div class="section-anchor" data-i="0"></div>
+  {#if visible[0]}
+    <div in:fly={{ y: 30, duration: 600 }}>
+      <div class="section-tag">01 · Occupation × Genre</div>
+      <h2>Does your job change what you watch?</h2>
+      <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group.</p>
+    </div>
+  {/if}
 </div>
+<ScrollyHist />
+
+<!-- section 02 — age × genre -->
+<div class="section-header">
+  <div class="section-anchor" data-i="1"></div>
+  {#if visible[1]}
+    <div in:fly={{ y: 30, duration: 600 }}>
+      <div class="section-tag">02 · Age × Genre</div>
+      <h2>Does age change what you enjoy?</h2>
+      <p>Genre preferences shift noticeably across age groups. Some genres climb steadily with age, others drop off sharply.</p>
+    </div>
+  {/if}
+</div>
+<AgeGenreChart />
+
+<!-- section 03 — scatter -->
+<div class="section-header">
+  <div class="section-anchor" data-i="2"></div>
+  {#if visible[2]}
+    <div in:fly={{ y: 30, duration: 600 }}>
+      <div class="section-tag">03 · How you compare</div>
+      <h2>How do you compare?</h2>
+      <p>Pick a movie, enter your demographics and rating, and see where you land compared to everyone else who rated it.</p>
+    </div>
+  {/if}
+</div>
+<CategoricalScatter />
+
+<!-- section 04 — glyph -->
+<div class="section-header">
+  <div class="section-anchor" data-i="3"></div>
+  {#if visible[3]}
+    <div in:fly={{ y: 30, duration: 600 }}>
+      <div class="section-tag">04 · Glyph exploration</div>
+      <h2>Every demographic at a glance.</h2>
+      <p>Each glyph represents an age × occupation group. The spokes show genre preferences — longer means higher average rating for that genre.</p>
+    </div>
+  {/if}
+</div>
+<GlyphChart />
+
+<footer>
+  <p>Dimension · CSCI 5609 · Spring 2025 · <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 100K dataset</a></p>
+</footer>
 
 <style>
   :global(body) {
@@ -106,78 +126,136 @@
     background: #0d1117;
     color: #e2e8f0;
     font-family: sans-serif;
+    overflow-x: hidden;
   }
 
-  .page {
+  :global(.scrolly) {
+    padding: 0 60px;
+  }
+
+  .section-header {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 60px 60px 40px;
+    border-top: 1px solid #1e2530;
+    min-height: 60px;
   }
 
-  header {
-    padding: 60px 0 50px;
-    border-bottom: 1px solid #1e2530;
+  .section-anchor {
+    height: 0;
+    width: 0;
   }
 
-  .subtitle {
-    font-size: 13px;
+  .section-tag {
+    font-size: 12px;
     color: #4a5568;
-    margin: 0 0 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 14px;
   }
 
-  h1 {
-    font-size: 64px;
+  .section-header h2 {
+    font-size: 36px;
     font-weight: 500;
     color: #e2e8f0;
-    margin: 0 0 16px;
-  }
-
-  .question {
-    font-size: 18px;
-    color: #64748b;
-    line-height: 1.6;
-    margin: 0 0 20px;
-  }
-
-  .info {
-    font-size: 14px;
-    color: #4a5568;
     margin: 0 0 12px;
+    letter-spacing: -0.01em;
   }
 
-  .team {
-    font-size: 13px;
-    color: #334155;
+  .section-header p {
+    font-size: 17px;
+    color: #64748b;
+    max-width: 600px;
+    line-height: 1.7;
     margin: 0;
   }
 
-  section {
-    padding: 50px 0;
-    border-bottom: 1px solid #1e2530;
+  #intro-virtual { height: 200vh; }
+
+  .intro-hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 40px;
+    box-sizing: border-box;
+    background: #0d1117;
   }
 
-  h2 {
-    font-size: 28px;
+  .eyebrow {
+    font-size: 12px;
+    color: #4a5568;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 20px;
+  }
+
+  h1 {
+    font-size: clamp(60px, 10vw, 120px);
     font-weight: 500;
     color: #e2e8f0;
-    margin: 0 0 10px;
+    margin: 0 0 24px;
+    letter-spacing: -0.03em;
   }
 
-  section p {
-    font-size: 16px;
+  .intro-question {
+    font-size: clamp(16px, 2vw, 22px);
     color: #64748b;
-    margin: 0 0 30px;
-    max-width: 620px;
-    line-height: 1.7;
+    max-width: 580px;
+    line-height: 1.6;
+    margin: 0 0 28px;
+  }
+
+  .intro-stats {
+    display: flex;
+    gap: 28px;
+    font-size: 13px;
+    color: #4a5568;
+    margin: 0 0 20px;
+  }
+
+  .intro-team {
+    font-size: 12px;
+    color: #2d3748;
+    margin: 0;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #2d3748;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  .scroll-arrow {
+    width: 1px;
+    height: 36px;
+    background: linear-gradient(to bottom, #2d3748, transparent);
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
   }
 
   footer {
-    padding: 24px 0;
-    font-size: 13px;
+    padding: 32px 60px;
+    font-size: 12px;
     color: #2d3748;
+    border-top: 1px solid #1e2530;
+    margin-top: 80px;
   }
 
-  footer a {
-    color: #2d3748;
-  }
+  footer a { color: #2d3748; }
 </style>

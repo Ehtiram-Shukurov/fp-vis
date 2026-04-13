@@ -1,14 +1,19 @@
 <script lang="ts">
   import { Scroll } from "$lib";
   import RatingsChart from "./histogramParams.svelte";
+  import RatingsHistogram from "./histogram.svelte";
+  import { fly } from "svelte/transition";
 
   let progress = $state(0);
+  let showComparison = $state(false);
 
-  const SECTION_SIZE = 100 / 8;
+  const SECTION_SIZE = 100 / 9;
 
   let activeIndex = $derived(
-    Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 7)
+    Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 8)
   );
+
+  let isExploreStep = $derived(activeIndex === 8);
 
   const sections = [
     {
@@ -91,13 +96,25 @@
       selectedGender: "All",
       selectedOccupation: "All",
     },
+    {
+      label: "Now explore it yourself.",
+      description: "Filter by any genre, age group, gender, or occupation. Compare two distributions side by side to find your own patterns.",
+      filterType: "genre",
+      selectedGenre: "",
+      selectedMovieId: "",
+      selectedAge: "All",
+      selectedGender: "All",
+      selectedOccupation: "All",
+    },
   ];
 </script>
 
 <Scroll bind:progress>
   {#each sections as section, i}
     <div class="scroll-card" class:active={i === activeIndex}>
-      <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+      {#if i < 8}
+        <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+      {/if}
       <h3>{section.label}</h3>
       <p>{section.description}</p>
     </div>
@@ -105,62 +122,108 @@
 
   <svelte:fragment slot="viz">
     <div class="viz-wrapper">
-      <RatingsChart
-        filterType={sections[activeIndex].filterType}
-        selectedGenre={sections[activeIndex].selectedGenre}
-        selectedMovieId={sections[activeIndex].selectedMovieId}
-        selectedAge={sections[activeIndex].selectedAge}
-        selectedGender={sections[activeIndex].selectedGender}
-        selectedOccupation={sections[activeIndex].selectedOccupation}
-      />
+      {#if !isExploreStep}
+        <RatingsChart
+          filterType={sections[activeIndex].filterType}
+          selectedGenre={sections[activeIndex].selectedGenre}
+          selectedMovieId={sections[activeIndex].selectedMovieId}
+          selectedAge={sections[activeIndex].selectedAge}
+          selectedGender={sections[activeIndex].selectedGender}
+          selectedOccupation={sections[activeIndex].selectedOccupation}
+        />
+      {:else}
+        <div class="explore-wrap" in:fly={{ y: 20, duration: 500 }}>
+          <button
+            onclick={() => showComparison = !showComparison}
+            class="compare-btn"
+          >
+            {showComparison ? 'Remove comparison' : '+ Add comparison'}
+          </button>
+          <div class="side-by-side">
+            <div class="chart-col"><RatingsHistogram /></div>
+            {#if showComparison}
+              <div class="chart-col" in:fly={{ x: 20, duration: 400 }}>
+                <RatingsHistogram />
+              </div>
+            {/if}
+          </div>
+        </div>
+      {/if}
     </div>
   </svelte:fragment>
 </Scroll>
 
 <style>
   .scroll-card {
-    min-height: 70vh;
+    min-height: 55vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 28px 0;
     border-bottom: 1px solid #1e2530;
-    transition: all 0.3s ease;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
   }
 
-  .scroll-card.active h3 {
-    color: #e2e8f0;
-  }
-
-  .scroll-card.active p {
-    color: #94a3b8;
+  .scroll-card.active {
+    opacity: 1;
   }
 
   .step-num {
-    font-size: 13px;
+    font-size: 12px;
     color: #4a5568;
     font-weight: 500;
+    margin-bottom: 8px;
   }
 
   h3 {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 500;
-    color: #334155;
-    margin: 8px 0 10px;
-    transition: color 0.3s ease;
+    color: #e2e8f0;
+    margin: 0 0 10px;
   }
 
   p {
     font-size: 15px;
-    color: #475569;
+    color: #64748b;
     line-height: 1.7;
     max-width: 420px;
     margin: 0;
-    transition: color 0.3s ease;
   }
 
   .viz-wrapper {
     width: 100%;
     height: 100%;
+  }
+
+  .explore-wrap {
+    padding: 20px 0;
+    width: 100%;
+  }
+
+  .compare-btn {
+    background: #111827;
+    color: #94a3b8;
+    border: 1px solid #1e2530;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    font-size: 13px;
+    transition: background 0.2s;
+  }
+
+  .compare-btn:hover {
+    background: #2d3748;
+  }
+
+  .side-by-side {
+    display: flex;
+    gap: 16px;
+  }
+
+  .chart-col {
+    flex: 1;
+    min-width: 0;
   }
 </style>
