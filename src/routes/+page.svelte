@@ -88,7 +88,7 @@
     </div>
   {/if}
 </div>
-<div class="chart-section">
+<div class="chart-section" style="padding-bottom: 20vh;">
   <ScrollyHist />
 </div>
 <!-- section 02 — age × genre -->
