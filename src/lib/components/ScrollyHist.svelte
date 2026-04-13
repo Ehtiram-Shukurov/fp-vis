@@ -67,8 +67,8 @@
       selectedOccupation: "All",
     },
     {
-      label: "",
-      description: "Artists seem to really enjoy the genre!",
+      label: "Artists seem to really enjoy the genre!",
+      description: "",
       filterType: "genre",
       selectedGenre: "Documentary",
       selectedMovieId: "",
@@ -77,8 +77,8 @@
       selectedOccupation: "artist",
     },
     {
-      label: "",
-      description: "The same can't be said for the executives...",
+      label: "The same can't be said for the executives...",
+      description: "",
       filterType: "genre",
       selectedGenre: "Documentary",
       selectedMovieId: "",
@@ -97,8 +97,8 @@
       selectedOccupation: "All",
     },
     {
-      label: "",
-      description: "And here is the disribution of ratings for women under 25 across all genres",
+      label: "And here is the disribution of ratings for women under 25 across all genres",
+      description: "",
       filterType: "genre",
       selectedGenre: "",
       selectedMovieId: "",
