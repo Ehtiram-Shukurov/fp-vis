@@ -97,7 +97,6 @@
     <div in:fly={{ y: 30, duration: 600 }}>
       <div class="section-tag">03 · How you compare</div>
       <h2>How do you compare?</h2>
-      <p>Pick a movie, enter your demographics and rating, and see where you land compared to everyone else who rated it.</p>
     </div>
   {/if}
 </div>
@@ -110,7 +109,7 @@
     <div in:fly={{ y: 30, duration: 600 }}>
       <div class="section-tag">04 · Glyph exploration</div>
       <h2>Every demographic at a glance.</h2>
-      <p>Each glyph represents an age × occupation group. The spokes show genre preferences — longer means higher average rating for that genre.</p>
+      <p>Each glyph represents an age × occupation group. The spokes show genre preferences, longer means higher average rating for that genre.</p>
     </div>
   {/if}
 </div>
