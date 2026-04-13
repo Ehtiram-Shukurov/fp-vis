@@ -7,12 +7,12 @@
   let progress = $state(0);
   let showComparison = $state(false);
 
-  const thresholds = [0, 15, 30, 45, 57, 69, 83, 97]
+  const thresholds = [0, 10, 20, 30, 40, 45, 55, 65, 75, 85, 90, 95]
 let activeIndex = $derived(
   thresholds.findLastIndex(t => progress >= t)
 )
 
-  let isExploreStep = $derived(activeIndex === 7);
+  let isExploreStep = $derived(activeIndex === 11);
 
   const sections = [
     {
@@ -27,7 +27,7 @@ let activeIndex = $derived(
     },
     {
       label: "Healthcare workers",
-      description: "With an average of 2.9, Healthcare workers have the lowest average rating with an astounding 569 1-star ratings across the occupation. Furthermore they are one of the few demographics with matching median and mode.",
+      description: "With an average of 2.9, Healthcare workers have the lowest average rating with an astounding 569 1-star ratings across the occupation. Furthermore they are one of the few demographics with matching median and mode. This may be explained by how difficult and crushing the healthcare profession can be day-to-day which later reflects into movie enjoyment.",
       filterType: "genre",
       selectedGenre: "",
       selectedMovieId: "",
@@ -37,7 +37,7 @@ let activeIndex = $derived(
     },
     {
       label: "Unemployed people",
-      description: "On the opposite end of the spectrum are unemplyed people who had the highest average rating of 3.8 across all the genres.",
+      description: "On the opposite end of the spectrum are unemployed people who had the highest average rating of 3.8 across all the genres. Unemployed people may include younger viewers who could have higher enjoyment in general.",
       filterType: "genre",
       selectedGenre: "",
       selectedMovieId: "",
@@ -77,13 +77,53 @@ let activeIndex = $derived(
     },
     {
       label: "The same can't be said for the executives...",
-      description: "",
+      description: "Executive may simply have higher standards in life which could cause this. Or, the focus on work that comes with being an executive may rebound with less enjoyment for 'leisure' activities.",
       filterType: "genre",
       selectedGenre: "Documentary",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
       selectedOccupation: "executive",
+    },
+    {
+      label: "Gender Also Has an Effect",
+      description: "This first graph shows Horror ratings for the male audience.",
+      filterType: "genre",
+      selectedGenre: "Horror",
+      selectedMovieId: "",
+      selectedAge: "Under 25",
+      selectedGender: "M",
+      selectedOccupation: "All",
+    },
+    {
+      label: "Switch to Female Distribution",
+      description: "The switch in this distribution shows a lot more skew towards lower ratings. There are even almost as many 1 ratings as the male distribution with less than half the total number of ratings! It's possible the general culture of growing up as a woman may influence perception of horror movies.",
+      filterType: "genre",
+      selectedGenre: "Horror",
+      selectedMovieId: "",
+      selectedAge: "Under 25",
+      selectedGender: "F",
+      selectedOccupation: "All",
+    },
+    {
+      label: "Male Documentary Ratings",
+      description: "The male distribution of documentary ratings is pretty standard.",
+      filterType: "genre",
+      selectedGenre: "Documentary",
+      selectedMovieId: "",
+      selectedAge: "All",
+      selectedGender: "M",
+      selectedOccupation: "All",
+    },
+    {
+      label: "Versus Female Documentary Ratings",
+      description: "This distribution is a lot more proportionally skewed towards the extreme ratings of 1s or 5s. Generally, experience growing up as a woman may increase the chances of a love-or-hate relationship with documentary related topics.",
+      filterType: "genre",
+      selectedGenre: "Documentary",
+      selectedMovieId: "",
+      selectedAge: "All",
+      selectedGender: "F",
+      selectedOccupation: "All",
     },
     {
       label: "Now explore it yourself.",
@@ -101,7 +141,7 @@ let activeIndex = $derived(
 <Scroll bind:progress debounce={50}>
   {#each sections as section, i}
     <div class="scroll-card" class:active={i === activeIndex}>
-      {#if i < 8}
+      {#if i < 12}
         <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
       {/if}
       <h3>{section.label}</h3>
