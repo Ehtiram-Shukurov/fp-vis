@@ -71,6 +71,7 @@ let tooltipX = $state(0)
 let tooltipY = $state(0)
 let tooltipAge = $state('')
 let tooltipRows = $state([])
+let chartWrap
 
 const thresholds = [10, 30, 45, 60, 75, 90]
 let activeIndex = $derived(thresholds.findLastIndex(t => progress >= t))
