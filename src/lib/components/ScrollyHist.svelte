@@ -10,10 +10,10 @@
   const SECTION_SIZE = 100 / 8;
 
   let activeIndex = $derived(
-    Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 8)
+    Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 7)
   );
 
-  let isExploreStep = $derived(activeIndex === 8);
+  let isExploreStep = $derived(activeIndex === 7);
 
   const sections = [
     {
@@ -68,7 +68,7 @@
     },
     {
       label: "Artists seem to really enjoy the genre!",
-      description: "                                                                                                                                                                 ",
+      description: "",
       filterType: "genre",
       selectedGenre: "Documentary",
       selectedMovieId: "",
@@ -78,7 +78,7 @@
     },
     {
       label: "The same can't be said for the executives...",
-      description: "                                                                                                                                                                 ",
+      description: "",
       filterType: "genre",
       selectedGenre: "Documentary",
       selectedMovieId: "",
