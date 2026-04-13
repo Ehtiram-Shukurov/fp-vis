@@ -54,6 +54,18 @@
         </p>
       {/if}
 
+      {#if introProgress > 85}
+        <p class="intro-explain" in:fly={{ y: 15, duration: 500 }}>
+          The following exploration considers a dataset 100,000 strong. It consists of data taken from a movie rating site wherein ratings for individual movies are one of [1, 2, 3, 4, 5] and each reviewer has self-reported their own demographic information.
+        </p>
+      {/if}
+      {#if introProgress > 95}
+        <p class="intro-explain" in:fly={{ y: 15, duration: 500 }}>
+          We will analyze this data, demonstrate the facts in the dataset, and provide some small hypotheses for explanation.
+          Please continue scrolling and enjoy!
+        </p>
+      {/if}
+
       {#if introProgress < 15}
         <div class="scroll-hint">
           <span>scroll</span>
@@ -203,6 +215,14 @@
 
   .intro-question {
     font-size: clamp(16px, 2vw, 22px);
+    color: #64748b;
+    max-width: 580px;
+    line-height: 1.6;
+    margin: 0 0 28px;
+  }
+
+  .intro-explain {
+    font-size: 14px;
     color: #64748b;
     max-width: 580px;
     line-height: 1.6;
