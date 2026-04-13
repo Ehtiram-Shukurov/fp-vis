@@ -68,7 +68,7 @@
     },
     {
       label: "Artists seem to really enjoy the genre!",
-      description: "",
+      description: "                                                                                                                                                                 ",
       filterType: "genre",
       selectedGenre: "Documentary",
       selectedMovieId: "",
@@ -78,7 +78,7 @@
     },
     {
       label: "The same can't be said for the executives...",
-      description: "",
+      description: "                                                                                                                                                                 ",
       filterType: "genre",
       selectedGenre: "Documentary",
       selectedMovieId: "",
