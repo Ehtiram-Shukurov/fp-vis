@@ -7,11 +7,10 @@
   let progress = $state(0);
   let showComparison = $state(false);
 
-  const SECTION_SIZE = 100 / 8;
-
-  let activeIndex = $derived(
-    Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 7)
-  );
+  const thresholds = [0, 15, 30, 45, 57, 69, 83, 97]
+let activeIndex = $derived(
+  thresholds.findLastIndex(t => progress >= t)
+)
 
   let isExploreStep = $derived(activeIndex === 7);
 
@@ -99,7 +98,7 @@
   ];
 </script>
 
-<Scroll bind:progress debounce={150}>
+<Scroll bind:progress debounce={50}>
   {#each sections as section, i}
     <div class="scroll-card" class:active={i === activeIndex}>
       {#if i < 8}
@@ -145,7 +144,7 @@
 
 <style>
   .scroll-card {
-    min-height: 55vh;
+    min-height: 60vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
