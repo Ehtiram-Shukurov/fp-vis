@@ -88,9 +88,9 @@
     </div>
   {/if}
 </div>
-<div class="chart-section" style="padding-bottom: 20vh;">
-  <ScrollyHist />
-</div>
+<ScrollyHist />
+<div style="height: 40vh;"></div>
+
 <!-- section 02 — age × genre -->
 <div class="section-header">
   <div class="section-anchor" data-i="1"></div>
@@ -102,9 +102,8 @@
     </div>
   {/if}
 </div>
-<div class="chart-section">
-  <AgeGenreChart />
-</div>
+<AgeGenreChart />
+
 <!-- section 03 — scatter -->
 <div class="section-header">
   <div class="section-anchor" data-i="2"></div>
@@ -115,10 +114,7 @@
     </div>
   {/if}
 </div>
-
-<div class="chart-section">
-  <CategoricalScatter />
-</div>
+<CategoricalScatter />
 
 <!-- section 04 — glyph -->
 <div class="section-header">
@@ -283,7 +279,4 @@
   }
 
   footer a { color: #2d3748; }
-  .chart-section {
-  overflow: clip;
-}
 </style>
