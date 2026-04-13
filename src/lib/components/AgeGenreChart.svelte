@@ -213,7 +213,7 @@ function animateLine(path) {
   }
 </script>
 
-<Scroll bind:progress>
+<Scroll bind:progress debounce={200}>
   {#each steps as step, i}
     <div class="scroll-card" class:active={i === activeIndex}>
       {#if i < 3}<span class="step-num">{String(i + 1).padStart(2, '0')}</span>{/if}
@@ -296,11 +296,10 @@ function animateLine(path) {
 
 <style>
   .scroll-card {
-    min-height: 60vh;
+    min-height: 55vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 28px 0;
     border-bottom: 1px solid #1e2530;
     opacity: 0.3;
     transition: opacity 0.3s ease;
