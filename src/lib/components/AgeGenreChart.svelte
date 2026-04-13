@@ -55,9 +55,7 @@ const steps = [
   }
 ]
 
-const SECTION_SIZE = 100 / steps.length
-let activeIndex = $derived(Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), steps.length - 1))
-let isExploreStep = $derived(activeIndex === steps.length - 1)
+
 
 const margin = { top: 20, right: 30, bottom: 40, left: 50 }
 const width = 960 - margin.left - margin.right
@@ -73,11 +71,12 @@ let tooltipX = $state(0)
 let tooltipY = $state(0)
 let tooltipAge = $state('')
 let tooltipRows = $state([])
-let chartWrap
 
-
-let selected = $derived(isExploreStep ? manualSelected : steps[activeIndex].genres)
-
+const thresholds = [10, 30, 45, 60, 75, 90]
+let activeIndex = $derived(thresholds.findLastIndex(t => progress >= t))
+let chartIndex = $derived(Math.max(activeIndex, 0))
+let isExploreStep = $derived(chartIndex === steps.length - 1)
+let selected = $derived(isExploreStep ? manualSelected : steps[chartIndex].genres)
   let xScale = $derived(
     d3.scalePoint()
       .domain(ageBuckets.map(b => b.label))
@@ -231,7 +230,7 @@ function animateLine(path) {
 			  {:else}
 
         {#if isExploreStep}
-          <div class="toggles">
+          <div class="toggles" style="padding-top: 40px;">
             {#each genreNames as genre}
               {#if genre !== 'unknown'}
                 <button
@@ -296,7 +295,7 @@ function animateLine(path) {
 
 <style>
   .scroll-card {
-    min-height: 55vh;
+    min-height: 60vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
