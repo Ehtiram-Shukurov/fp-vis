@@ -39,7 +39,7 @@
         </p>
       {/if}
 
-      {#if introProgress > 55}
+      {#if introProgress > 45}
         <div class="intro-stats" in:fly={{ y: 20, duration: 600 }}>
           <span>100K ratings</span>
           <span>943 users</span>
@@ -48,20 +48,21 @@
         </div>
       {/if}
 
-      {#if introProgress > 75}
+      {#if introProgress > 65}
         <p class="intro-team" in:fly={{ y: 15, duration: 500 }}>
           Dylan Lyon · Genevieve Gray · Ezra Shukurov · Jake O'Shaughnessy · Max Lalonde
         </p>
       {/if}
 
-      {#if introProgress > 85}
+      {#if introProgress > 80}
         <p class="intro-explain" in:fly={{ y: 15, duration: 500 }}>
-          The following exploration considers a dataset 100,000 strong. It consists of data taken from a movie rating site wherein ratings for individual movies are one of [1, 2, 3, 4, 5] and each reviewer has self-reported their own demographic information.
+          The following exploration is built on 100,000 movie ratings collected from a rating site in 1997 and 1998. 
+          Each rating is a score from 1 to 5, and every reviewer self-reported their own demographic information.
         </p>
       {/if}
       {#if introProgress > 95}
         <p class="intro-explain" in:fly={{ y: 15, duration: 500 }}>
-          We will analyze this data, demonstrate the facts in the dataset, and provide some small hypotheses for explanation.
+          We will analyze this data, demonstrate the patterns we found, and offer some hypotheses along the way. 
           Please continue scrolling and enjoy!
         </p>
       {/if}
@@ -226,7 +227,7 @@
     color: #64748b;
     max-width: 580px;
     line-height: 1.6;
-    margin: 0 0 28px;
+    margin: 20px 0 15px;
   }
 
   .intro-stats {
