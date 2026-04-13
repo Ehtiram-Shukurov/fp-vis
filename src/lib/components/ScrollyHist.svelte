@@ -27,14 +27,14 @@
       selectedOccupation: "All",
     },
     {
-      label: "Children's",
-      description: "With an average of 3.4, this genre notably shows a mode where 3-star and 4-star ratings are almost tied, contrasting the usual trend where 4-star ratings dominate significantly.",
+      label: "Healthcare workers",
+      description: "With an average of 2.9, Healthcare workers have the lowest average rating with an astounding 569 1-star ratings across the occupation. Furthermore they are one of the few demographics with matching median and mode.",
       filterType: "genre",
-      selectedGenre: "Children's",
+      selectedGenre: "",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
-      selectedOccupation: "All",
+      selectedOccupation: "Healthcare",
     },
     {
       label: "Documentary",
