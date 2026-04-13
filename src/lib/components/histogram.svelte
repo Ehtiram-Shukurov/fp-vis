@@ -313,12 +313,7 @@
 		color: #64748b;
 	}
 
-	@keyframes grow {
-  from { height: 0; }
-  to   { height: var(--bar-height); }
-}
-
 .bar {
-  animation: grow 0.8s ease-out forwards;
+  transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>

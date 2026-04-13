@@ -1,14 +1,18 @@
 <script lang="ts">
   import { Scroll } from "$lib";
   import RatingsChart from "./histogramParams.svelte";
+  import RatingsHistogram from "./histogram.svelte";
+  import { fly } from "svelte/transition";
 
   let progress = $state(0);
+  let showComparison = $state(false);
 
-  const SECTION_SIZE = 100 / 8;
+  const thresholds = [0, 10, 20, 30, 40, 45, 55, 65, 75, 85, 90, 95]
+let activeIndex = $derived(
+  thresholds.findLastIndex(t => progress >= t)
+)
 
-  let activeIndex = $derived(
-    Math.min(Math.max(Math.floor(progress / SECTION_SIZE), 0), 7)
-  );
+  let isExploreStep = $derived(activeIndex === 11);
 
   const sections = [
     {
@@ -22,18 +26,38 @@
       selectedOccupation: "All",
     },
     {
-      label: "Children's",
-      description: "With an average of 3.4, this genre notably shows a mode where 3-star and 4-star ratings are almost tied, contrasting the usual trend where 4-star ratings dominate significantly.",
+      label: "Healthcare workers",
+      description: "With an average of 2.9, Healthcare workers have the lowest average rating with an astounding 569 1-star ratings across the occupation. Furthermore they are one of the few demographics with matching median and mode. This may be explained by how difficult and crushing the healthcare profession can be day-to-day which later reflects into movie enjoyment.",
+      filterType: "genre",
+      selectedGenre: "",
+      selectedMovieId: "",
+      selectedAge: "All",
+      selectedGender: "All",
+      selectedOccupation: "healthcare",
+    },
+    {
+      label: "Unemployed people",
+      description: "On the opposite end of the spectrum are unemployed people who had the highest average rating of 3.8 across all the genres. Unemployed people may include younger viewers who could have higher enjoyment in general.",
+      filterType: "genre",
+      selectedGenre: "",
+      selectedMovieId: "",
+      selectedAge: "All",
+      selectedGender: "All",
+      selectedOccupation: "none",
+    },
+    {
+      label: "Homemakers",
+      description: "Homemakers disliked the children's genre much more than the other occupations. While we cannot be certain of the reasoning for this, one plausible idea is that homemakers who care for children are probably a bit sick of watching the same childrens movie over and over.",
       filterType: "genre",
       selectedGenre: "Children's",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
-      selectedOccupation: "All",
+      selectedOccupation: "homemaker",
     },
     {
-      label: "Documentary",
-      description: "Averaging 3.7, documentaries benefit from a niche audience. Since viewers typically seek out specific topics they already enjoy, the genre avoids the 'casual dislike' often seen in broader categories.",
+      label: "The documentary genre speaks to different people",
+      description: "This is the distribution of ratings across all occupations for the documentary genre.",
       filterType: "genre",
       selectedGenre: "Documentary",
       selectedMovieId: "",
@@ -42,50 +66,70 @@
       selectedOccupation: "All",
     },
     {
-      label: "Drama",
-      description: "At a 3.7 average, Drama is a heavyweight. As a popular and broad genre, its distribution closely mirrors the shape of the overall dataset, representing a reliable baseline for audience expectations.",
+      label: "Artists seem to really enjoy the genre!",
+      description: "",
       filterType: "genre",
-      selectedGenre: "Drama",
+      selectedGenre: "Documentary",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
-      selectedOccupation: "All",
+      selectedOccupation: "artist",
     },
     {
-      label: "Fantasy",
-      description: "A lower average of 3.2. This may stem from the 'source material curse'—readers often feel book-to-film adaptations fall short—and the inherent difficulty of executing complex world-building.",
+      label: "The same can't be said for the executives...",
+      description: "Executive may simply have higher standards in life which could cause this. Or, the focus on work that comes with being an executive may rebound with less enjoyment for 'leisure' activities.",
       filterType: "genre",
-      selectedGenre: "Fantasy",
+      selectedGenre: "Documentary",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
-      selectedOccupation: "All",
+      selectedOccupation: "executive",
     },
     {
-      label: "Film-Noir",
-      description: "The highest average at 3.9. Much like documentaries, Film-Noir attracts a specific cinephile demographic, resulting in fewer low ratings and a very high concentration of critical acclaim.",
-      filterType: "genre",
-      selectedGenre: "Film-Noir",
-      selectedMovieId: "",
-      selectedAge: "All",
-      selectedGender: "All",
-      selectedOccupation: "All",
-    },
-    {
-      label: "Horror",
-      description: "A lower average of 3.3. This is likely tied to the genre's objective: it is designed to provoke unease or fear, a visceral reaction that doesn't always translate to a high numerical comfort rating.",
+      label: "Gender Also Has an Effect",
+      description: "This first graph shows Horror ratings for the male audience.",
       filterType: "genre",
       selectedGenre: "Horror",
       selectedMovieId: "",
-      selectedAge: "All",
-      selectedGender: "All",
+      selectedAge: "Under 25",
+      selectedGender: "M",
       selectedOccupation: "All",
     },
     {
-      label: "War",
-      description: "Strong performance with a 3.8 average. The distribution is top-heavy, showing nearly identical counts for 4 and 5-star ratings, indicating high satisfaction among its viewership.",
+      label: "Switch to Female Distribution",
+      description: "The switch in this distribution shows a lot more skew towards lower ratings. There are even almost as many 1 ratings as the male distribution with less than half the total number of ratings! It's possible the general culture of growing up as a woman may influence perception of horror movies.",
       filterType: "genre",
-      selectedGenre: "War",
+      selectedGenre: "Horror",
+      selectedMovieId: "",
+      selectedAge: "Under 25",
+      selectedGender: "F",
+      selectedOccupation: "All",
+    },
+    {
+      label: "Male Documentary Ratings",
+      description: "The male distribution of documentary ratings is pretty standard.",
+      filterType: "genre",
+      selectedGenre: "Documentary",
+      selectedMovieId: "",
+      selectedAge: "All",
+      selectedGender: "M",
+      selectedOccupation: "All",
+    },
+    {
+      label: "Versus Female Documentary Ratings",
+      description: "This distribution is a lot more proportionally skewed towards the extreme ratings of 1s or 5s. Generally, experience growing up as a woman may increase the chances of a love-or-hate relationship with documentary related topics.",
+      filterType: "genre",
+      selectedGenre: "Documentary",
+      selectedMovieId: "",
+      selectedAge: "All",
+      selectedGender: "F",
+      selectedOccupation: "All",
+    },
+    {
+      label: "Now explore it yourself.",
+      description: "As you can see, there are many differences and patterns to be found when analyzing the ratings of certain demographics and sub-demographics. Filter by any genre, age group, gender, or occupation. Compare two distributions side by side to find your own patterns.",
+      filterType: "genre",
+      selectedGenre: "",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
@@ -94,10 +138,12 @@
   ];
 </script>
 
-<Scroll bind:progress>
+<Scroll bind:progress debounce={50}>
   {#each sections as section, i}
     <div class="scroll-card" class:active={i === activeIndex}>
-      <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+      {#if i < 12}
+        <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
+      {/if}
       <h3>{section.label}</h3>
       <p>{section.description}</p>
     </div>
@@ -105,62 +151,109 @@
 
   <svelte:fragment slot="viz">
     <div class="viz-wrapper">
-      <RatingsChart
-        filterType={sections[activeIndex].filterType}
-        selectedGenre={sections[activeIndex].selectedGenre}
-        selectedMovieId={sections[activeIndex].selectedMovieId}
-        selectedAge={sections[activeIndex].selectedAge}
-        selectedGender={sections[activeIndex].selectedGender}
-        selectedOccupation={sections[activeIndex].selectedOccupation}
-      />
+      {#if !isExploreStep}
+        <RatingsChart
+          filterType={sections[activeIndex].filterType}
+          selectedGenre={sections[activeIndex].selectedGenre}
+          selectedMovieId={sections[activeIndex].selectedMovieId}
+          selectedAge={sections[activeIndex].selectedAge}
+          selectedGender={sections[activeIndex].selectedGender}
+          selectedOccupation={sections[activeIndex].selectedOccupation}
+        />
+      {:else}
+        <div class="explore-wrap" in:fly={{ y: 20, duration: 500 }}>
+          <button
+            onclick={() => showComparison = !showComparison}
+            class="compare-btn"
+          >
+            {showComparison ? 'Remove comparison' : '+ Add comparison'}
+          </button>
+          <div class="side-by-side">
+            <div class="chart-col"><RatingsHistogram /></div>
+            {#if showComparison}
+              <div class="chart-col" in:fly={{ x: 20, duration: 400 }}>
+                <RatingsHistogram />
+              </div>
+            {/if}
+          </div>
+        </div>
+      {/if}
     </div>
   </svelte:fragment>
 </Scroll>
 
 <style>
   .scroll-card {
-    min-height: 70vh;
+    min-height: 60vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 28px 0;
     border-bottom: 1px solid #1e2530;
-    transition: all 0.3s ease;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
   }
 
-  .scroll-card.active h3 {
-    color: #e2e8f0;
-  }
-
-  .scroll-card.active p {
-    color: #94a3b8;
+  .scroll-card.active {
+    opacity: 1;
   }
 
   .step-num {
-    font-size: 13px;
+    font-size: 12px;
     color: #4a5568;
     font-weight: 500;
+    margin-bottom: 8px;
   }
 
   h3 {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 500;
-    color: #334155;
-    margin: 8px 0 10px;
-    transition: color 0.3s ease;
+    color: #e2e8f0;
+    margin: 0 0 10px;
   }
 
   p {
     font-size: 15px;
-    color: #475569;
+    color: #64748b;
     line-height: 1.7;
     max-width: 420px;
     margin: 0;
-    transition: color 0.3s ease;
   }
 
   .viz-wrapper {
     width: 100%;
     height: 100%;
+    padding-top: 80px;
+  }
+
+  .explore-wrap {
+    padding: 20px 0;
+    width: 100%;
+  }
+
+  .compare-btn {
+    background: #111827;
+    color: #94a3b8;
+    border: 1px solid #1e2530;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    font-size: 13px;
+    transition: background 0.2s;
+  }
+
+  .compare-btn:hover {
+    background: #2d3748;
+  }
+
+  .side-by-side {
+    display: flex;
+    gap: 16px;
+  }
+
+  .chart-col {
+    flex: 1;
+    min-width: 0;
   }
 </style>

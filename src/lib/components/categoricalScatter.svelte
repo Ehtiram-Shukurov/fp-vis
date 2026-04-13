@@ -14,9 +14,9 @@
 
   let myProgress = $state(0);
 
-  let ageOnX = $derived(myProgress <= 30);
-  let GenderOnX = $derived((50 >= myProgress) && (myProgress > 30));
-  let OccupationOnX = $derived(myProgress > 50);
+  let ageOnX = $derived(myProgress <= 50)
+  let GenderOnX = $derived(myProgress > 50 && myProgress <= 75)
+  let OccupationOnX = $derived(myProgress > 75)
 
   let myProgressSetUp = $state(0);
 
@@ -98,12 +98,7 @@
 		return occs.sort()
 	});
 
-	// let filterType = "genre"
-	// let selectedGenre = "Comedy"
 	let selectedMovieId = $state("");
-	// let selectedAge = "All"
-	// let selectedGender = "All"
-	// let selectedOccupation = "All"
 
 	let filteredRatings = $derived(allRatings.filter(r => {
     if (selectedMovieId === "") return false
@@ -121,7 +116,6 @@
 	let avgRating = $derived(filteredRatings.length > 0
 		? (filteredRatings.reduce((sum, r) => sum + r.rating, 0) / filteredRatings.length).toFixed(1)
 		: "N/A");
-
 
   let userAge= $state("");
   let userGender= $state("");
@@ -194,7 +188,6 @@
       else return userOccupation;
     });
 
-
     $effect(() => {
       if (ageOnX) {
         xAxis="Age";
@@ -208,153 +201,98 @@
     })
 </script>
 
-
-<Scroll bind:progress={ myProgressSetUp }>
-	<!-- Story here -->
-  <div class="storyTime2">
-    <p>The data and correlations shown before provide a clear visualization of the trends different demographics cause in movie ratings.</p>
-    <p>However, getting you, the reader, involved in these comparisons will provide something a lot more relatable and actionable.</p>
-    <p>To start, look to the right and pick a movie you've seen, enter your age, gender, occupation, and rating for that same movie. Picking a movie with more ratings, such as Toy Story, will help with better comparisons.</p>
-    <p>This information will then be input and sorted in the visualization below. You should see the total data for the movie you selected.</p>
-    <p>Bigger dots mean more ratings with the y-axis displaying what specific rating each group has chosen [1, 2, 3, 4, 5]. The x-axis will initially be grouped by age group but will eventually change to age and occupation as you scroll.</p>
-    <p>The red and/or green highlight displays where you yourself would fit into the data!</p>
-  </div>
-	<svelte:fragment slot="viz">
-		<div class="totalcenter">
+<Scroll bind:progress={myProgressSetUp} --scrolly-story-width="0">
+  <svelte:fragment slot="viz">
+    <div class="setup-center">
       {#if loading}
-        <div class="center">
-          <p>Loading data...</p>
-        </div>
+        <p style="color: #64748b">Loading data...</p>
       {:else if error}
-        <div class="center">
-          <p style="color: red;">{error}</p>
-        </div>
+        <p style="color: red">{error}</p>
       {:else}
-        <div class="border">
-          <label for="movie">Movie:</label>
-          <select id="movie" bind:value={selectedMovieId}>
-            <option value="">-- select a movie --</option>
-            {#each Object.values(movies) as movie}
-              <option value={movie.id}>{movie.title}</option>
-            {/each}
-          </select>
-
-          <p><strong>Enter Your Demographics as Well as Your Rating For This Movie</strong></p>
-
-          <div>
-            <label for="age">Age:</label>
-            <select id="age" bind:value={userAge}>
-              <option>Under 25</option>
-              <option>25-34</option>
-              <option>35-44</option>
-              <option>45+</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="gender">Gender:</label>
-            <select id="gender" bind:value={userGender}>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="occupation">Occupation:</label>
-            <select id="occupation" bind:value={userOccupation}>
-              {#each allOccupations as occ}
-                <option value={occ}>{occ}</option>
-              {/each}
-            </select>
-          </div>
-
-          <div>
-            <label for="rating">Rating:</label>
-            <select id="rating" bind:value={userRating}>
-              <option value=1>1</option>
-              <option value=2>2</option>
-              <option value=3>3</option>
-              <option value=4>4</option>
-              <option value=5>5</option>
-            </select>
-          </div>
-
-          <!-- <div>
-            <label for="xAxis">Select an Attribute to Compare Over:</label>
-            <select id="xAxis" bind:value={xAxis}>
-              <option value="Age">Age</option>
-              <option value="Gender">Gender</option>
-              <option value="Occupation">Occupation</option>
-            </select>
-          </div> -->
+        <div class="setup-story">
+          <h3>Enter your details</h3>
+          <p>Pick a movie you've seen. Then, enter your demographic info and personal rating. In the following visualization, your personal dot will appear highlighted green and/or red on the chart where you would fit in.</p>
+          <p>Bigger dots mean more people gave that rating.</p>
         </div>
 
+          <div class="setup-form">
+            <div class="form-row">
+              <label for="movie">Movie</label>
+              <select id="movie" bind:value={selectedMovieId}>
+                <option value="">-- select a movie --</option>
+                {#each Object.values(movies) as movie}
+                  <option value={movie.id}>{movie.title}</option>
+                {/each}
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="age">Age</label>
+              <select id="age" bind:value={userAge}>
+                <option>Under 25</option>
+                <option>25-34</option>
+                <option>35-44</option>
+                <option>45+</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="gender">Gender</label>
+              <select id="gender" bind:value={userGender}>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="occupation">Occupation</label>
+              <select id="occupation" bind:value={userOccupation}>
+                {#each allOccupations as occ}
+                  <option value={occ}>{occ}</option>
+                {/each}
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="rating">Rating</label>
+              <select id="rating" bind:value={userRating}>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+              </select>
+            </div>
+          </div>
       {/if}
     </div>
-	</svelte:fragment>
+  </svelte:fragment>
 </Scroll>
 
-<Scroll bind:progress={ myProgress } --scrolly-viz-width="3fr">
-	<!-- Story here -->
-  <div class="storyTime">
-    <p>To start, consider your placement in this visualization sorted with age groups on the bottom.</p>
-    <br>
-    <br>
-    <p>Do you match with the biggest rating group within those of a similar age?</p>
-    <br>
-    <br>
-    <p>Why do you think this is? Do you think different age groups should have wildly different opinions on this movie or not?</p>
-    <br>
-    <br>
-    <p>Is age or associated factors like maturity a big factor of your rating for this movie or do you think it is something else?</p>
-    <br>
-    <br>
-    <p>Now, as you scroll past here, you should see the graph transform to be sorted by gender.</p>
-    <br>
-    <br>
-    <p>Does your rating match up with those within your gender?</p>
-    <br>
-    <br>
-    <p>Does your selected movie show big differences in rating by gender?</p>
-    <br>
-    <br>
-    <p>Think deeply on yourself, did your gender, and the attributes related to your gender such as the culture growing up, seem to have any impact on your personal rating?</p>
-    <br>
-    <br>
-    <p>Finally, we switch the graph to sort by occupation.</p>
-    <br>
-    <br>
-    <p>Do you match those who share your occupation?</p>
-    <br>
-    <br>
-    <p>Is this a movie you think people in your occupation would share feelings on in some way good or bad?</p>
-    <br>
-    <br>
-    <p>Do you think personally that your rating correlates with your choice in occupation? Did something in your life that inspired you to pursure your occupation also eventually affect your rating of this movie?</p>
-    <br>
-    <br>
-    <p>Do all the total result match up with your expectations?</p>
-    <br>
-    <br>
-    <p>Perhaps you felt that everything went as expected and your likes are similar to your most direct peers.</p>
-    <br>
-    <br>
-    <p>Or, maybe, you felt like you were an outcast among your peers and this only confirmed that more.</p>
-    <br>
-    <br>
-    <p>Or, it could be, that none of this provided any sort of conclusion within you.</p>
-    <br>
-    <br>
-    <p>Demographics affecting ratings of movies is likely a way deeper and more complex topic of the total culture and environment that a person experienced growing up with led them to be who they are today.</p>
-    <br>
-    <br>
-    <p>As such, thinking about what led you to like or dislike anything in your life can be very difficult but also very worthwhile to challenge yourself and grow,</p>
+<!-- scrolly-->
+<Scroll bind:progress={myProgress} --scrolly-viz-width="3fr">
+  <div class="story-scroll">
+
+    <div class="story-block" class:active={myProgress <= 50}>
+      <span class="step-num">01</span>
+      <h3>By age</h3>
+      <p>Consider your placement in this visualization, sorted with age groups on the bottom. Do you match the biggest rating group within those of a similar age?</p>
+      <p>Is age a big factor of your rating, or do you think it's something else?</p>
+    </div>
+
+    <div class="story-block" class:active={myProgress > 50 && myProgress <= 75}>
+      <span class="step-num">02</span>
+      <h3>By gender</h3>
+      <p>Now the graph switches to sort by gender. Does your rating match up with others who share yours?</p>
+      <p>Did your gender, and the culture tied to it, have any impact on how you rated this film?</p>
+    </div>
+
+    <div class="story-block" class:active={myProgress > 75}>
+      <span class="step-num">03</span>
+      <h3>By occupation</h3>
+      <p>Finally, sorted by occupation. Do you match those who share your field?</p>
+      <p>Demographics affecting movie ratings runs deeper than it seems. it's the product of everything that shaped who you are.</p>
+    </div>
 
   </div>
-	<svelte:fragment slot="viz">
-		<!-- Visualizations here -->
+  <svelte:fragment slot="viz">
     <div class="center">
-
       <p>Total ratings: {filteredRatings.length} | Average: {avgRating}</p>
       <div class="border">
         <svg {height} width=100% viewBox={`0 0 ${width} ${height}`}>
@@ -406,70 +344,137 @@
               stroke="#2d3748"
               stroke-width="1"
             ></line>
-
           </g>
         </svg>
       </div>
     </div>
-	</svelte:fragment>
+  </svelte:fragment>
 </Scroll>
 
-
-
 <style>
-
-.storyTime {
-  text-align: center;
-  color: #666;
-  height: 420vh; /* Make the div scrollable with a 200% view height */
-  border: 2px solid #aaa;
-  padding: 10px;
-  margin: 10px;
-}
-
-.storyTime2 {
-  text-align: center;
-  color: #666;
-  height: 80vh; /* Make the div scrollable with a 200% view height */
-  border: 2px solid #aaa;
-  padding: 10px;
-  margin: 10px;
-}
-
-.data {
-  transition: all 1s ease;
-}
-.totalcenter {
+.setup-story {
   display: flex;
   flex-direction: column;
+  gap: 14px;
+  padding: 28px 0;
 }
 
-.center {
-  display: flex;
-  flex-direction: column;
-}
-
-.border {
-  border: 1px solid #1e2530;
-  background-color: transparent;
-  border-radius: 8px;
-  padding: 16px;
-}
-
-
-select {
-  background: #1e2530;
+.setup-story h3 {
+  font-size: 28px;
+  font-weight: 500;
   color: #e2e8f0;
-  border: 1px solid #2d3748;
-  border-radius: 4px;
-  padding: 4px 8px;
+  margin: 0;
 }
 
-label {
-  color: #94a3b8;
-}
-
-p {
+.setup-story p {
+  font-size: 15px;
   color: #64748b;
+  line-height: 1.7;
+  max-width: 550px;
+  margin: 0;
 }
+  .setup-center {
+    width: 100%;
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .setup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .form-row label {
+    width: 90px;
+    font-size: 14px;
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+
+  .form-row select {
+    flex: 1;
+  }
+  .story-scroll {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .story-block {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 28px 0;
+    border-bottom: 1px solid #1e2530;
+    gap: 10px;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+
+  .story-block.active {
+    opacity: 1;
+  }
+
+  .step-num {
+    font-size: 12px;
+    color: #4a5568;
+    font-weight: 500;
+  }
+
+  .story-block h3 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #e2e8f0;
+    margin: 0;
+  }
+
+  .story-block p {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.7;
+    max-width: 420px;
+    margin: 0;
+  }
+
+  .data {
+    transition: all 1s ease;
+  }
+
+  .center {
+    display: flex;
+    flex-direction: column;
+    padding-top: 80px;
+  }
+
+  .border {
+    border: 1px solid #1e2530;
+    background-color: transparent;
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  select {
+    background: #1e2530;
+    color: #e2e8f0;
+    border: 1px solid #2d3748;
+    border-radius: 4px;
+    padding: 4px 8px;
+  }
+
+  label {
+    color: #94a3b8;
+  }
+
+  p {
+    color: #64748b;
+  }
 </style>
