@@ -87,16 +87,6 @@
       selectedOccupation: "executive",
     },
     {
-      label: "Gender also plays a role",
-      description: "Here is the disribution of ratings for men under 25 across all genres",
-      filterType: "genre",
-      selectedGenre: "",
-      selectedMovieId: "",
-      selectedAge: "Under 25",
-      selectedGender: "Male",
-      selectedOccupation: "All",
-    },
-    {
       label: "Now explore it yourself.",
       description: "As you can see, there are many differences and patterns to be found when analyzing the ratings of certain demographics and sub-demographics. Filter by any genre, age group, gender, or occupation. Compare two distributions side by side to find your own patterns.",
       filterType: "genre",
