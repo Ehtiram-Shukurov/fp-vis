@@ -43,29 +43,28 @@
       {/if}
 
       {#if introProgress > 45}
-        <div class="intro-stats" in:fly={{ y: 20, duration: 600 }}>
-          <span>100K ratings</span>
-          <span>943 users</span>
-          <span>1,682 movies</span>
-          <span>18 genres</span>
-        </div>
-      {/if}
-
-      {#if introProgress > 65}
         <p class="intro-team" in:fly={{ y: 15, duration: 500 }}>
           Dylan Lyon · Genevieve Gray · Ezra Shukurov · Jake O'Shaughnessy · Max Lalonde
         </p>
       {/if}
 
+      {#if introProgress > 65}
+        <div class="intro-stats" in:fly={{ y: 20, duration: 600 }}>
+          <span class="stat animate" data-target="100000"></span> ratings
+          <span class="stat animate" data-target="943"></span> users
+          <span class="stat animate" data-target="1682"></span> movies
+          <span class="stat animate" data-target="18"></span> genres
+        </div>
+      {/if}
+
       {#if introProgress > 80}
         <p class="intro-explain" in:fly={{ y: 15, duration: 500 }}>
-          The following exploration is built on 100,000 movie ratings collected from a rating site in 1997 and 1998. 
-          Each rating is a score from 1 to 5, and every reviewer self-reported their own demographic information.
+          These 100,000 ratings, collected from 1997-98, rate a movie on a solid scale from 1-5. Each rating correlated to a user who self-reports relevant demographic information.
         </p>
       {/if}
       {#if introProgress > 95}
         <p class="intro-explain" in:fly={{ y: 15, duration: 500 }}>
-          We will analyze this data, demonstrate the patterns we found, and offer some hypotheses along the way. 
+          This data is analyzed and visualized to display concrete patterns and offer possible hypotheses. 
           Please continue scrolling and enjoy!
         </p>
       {/if}
@@ -133,6 +132,33 @@
 </footer>
 
 <style>
+
+  @property --num {
+    syntax: "<integer>";
+    initial-value: 0;
+    inherits: false;
+  }
+
+  .stat {
+    --num: 0;
+    counter-reset: num var(--num);
+  }
+
+  .stat::after {
+    content: counter(num);
+  }
+
+  /* One keyframe per unique target number */
+  @keyframes count-to-100000 { to { --num: 100000; } }
+  @keyframes count-to-943    { to { --num: 943; } }
+  @keyframes count-to-1682   { to { --num: 1682; } }
+  @keyframes count-to-18     { to { --num: 18; } }
+
+  .stat.animate[data-target="100000"] { animation: count-to-100000 2s ease forwards; }
+  .stat.animate[data-target="943"]    { animation: count-to-943    1.5s ease forwards; }
+  .stat.animate[data-target="1682"]   { animation: count-to-1682   1.8s ease forwards; }
+  .stat.animate[data-target="18"]     { animation: count-to-18     1s ease forwards; }
+
   :global(.scrolly) {
     padding: 0 60px;
   }
@@ -182,7 +208,7 @@
     gap: 32px;
     font-size: 16px;
     font-weight: 500;
-    color: var(--text-muted, #94a3b8);
+    color: var(--text-muted, #cdd1d7);
     margin: 0 0 40px; 
   }
 
