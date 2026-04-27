@@ -38,13 +38,6 @@ p {
   margin: 0 0 16px 0;
 }
 
-/* --- GLOBAL SECTION HEADERS --- */
-.section-header {
-  height: 100vh;
-  position: relative;
-  margin-top: 15vh;
-}
-
 .header-content {
   position: sticky;
   top: 0;
@@ -64,14 +57,10 @@ p {
   margin-bottom: 16px;
 }
 
-.section-header h2 {
-  font-size: 40px;
-  margin: 0 0 16px;
-  letter-spacing: -0.01em;
+.sticky-text-wrap {
+  top: 42vh !important; 
 }
 
-.section-header p {
-  font-size: 20px;
-  color: var(--text-secondary);
-  max-width: 650px;
+.viz-wrapper, .center {
+  padding-top: 22vh !important; 
 }

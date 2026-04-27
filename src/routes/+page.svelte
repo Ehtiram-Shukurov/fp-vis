@@ -1,4 +1,5 @@
 <script>
+// @ts-nocheck
   import { onMount } from 'svelte'
   import { fly, fade } from 'svelte/transition'
   import Scroll from '$lib/components/Scroll.svelte'
@@ -8,32 +9,21 @@
   import GlyphChart from '$lib/components/GlyphChart.svelte'
 
   let introProgress = $state(0)
-  let visible = $state([false, false, false, false])
-  let bodyVisible = $state([false, false, false, false]) // NEW: Tracks the charts
+  let sceneVisible = $state([false, false, false, false])
 
   onMount(() => {
-    const headerObs = new IntersectionObserver(entries => {
+    const sceneObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         const i = parseInt(e.target.dataset.i)
-        visible[i] = e.isIntersecting
+        sceneVisible[i] = e.isIntersecting
       })
-    }, { threshold: 0.65 })
-
-    document.querySelectorAll('.section-header').forEach((el, i) => {
-      el.dataset.i = i
-      headerObs.observe(el)
+    }, { 
+      threshold: 0.03
     })
 
-    const bodyObs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        const i = parseInt(e.target.dataset.i)
-        bodyVisible[i] = e.isIntersecting
-      })
-    }, { threshold: 0.03 }) // Triggers right as the body slides into view
-
-    document.querySelectorAll('.section-body').forEach((el, i) => {
+    document.querySelectorAll('.scene').forEach((el, i) => {
       el.dataset.i = i
-      bodyObs.observe(el)
+      sceneObs.observe(el)
     })
   })
 </script>
@@ -91,68 +81,51 @@
 </Scroll>
 
 <!-- section 01 — occupation × genre -->
-<div class="section-header" data-i="0">
-  <div class="header-content">
-    {#if visible[0]}
-      <div in:fly={{ y: 30, duration: 800 }} out:fade={{ duration: 400 }}>
-        <div class="section-tag">01 · Occupation × Genre</div>
-        <h2>Does your job change what you watch?</h2>
-        <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group.</p>
-      </div>
-    {/if}
+<div class="scene" data-i="0" class:scene-visible={sceneVisible[0]}>
+  <div class="pinned-header">
+    <div class="section-tag">01 · Occupation × Genre</div>
+    <h2>Does your job change what you watch?</h2>
+    <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group.</p>
   </div>
-</div>
-
-<div class="section-body" data-i="0" class:body-visible={bodyVisible[0]}>
-  <ScrollyHist />
+  <div class="scene-body">
+    <ScrollyHist />
+  </div>
 </div>
 
 <!-- section 02 — age × genre -->
-<div class="section-header" data-i="1">
-  <div class="header-content">
-    {#if visible[1]}
-      <div in:fly={{ y: 30, duration: 800 }} out:fade={{ duration: 400 }}>
-        <div class="section-tag">02 · Age × Genre</div>
-        <h2>Does age change what you enjoy?</h2>
-        <p>Genre preferences shift noticeably across age groups. Some genres climb steadily with age, others drop off sharply.</p>
-      </div>
-    {/if}
+<div class="scene" data-i="1" class:scene-visible={sceneVisible[1]}>
+  <div class="pinned-header">
+    <div class="section-tag">02 · Age × Genre</div>
+    <h2>Does age change what you enjoy?</h2>
+    <p>Genre preferences shift noticeably across age groups. Some genres climb steadily with age, others drop off sharply.</p>
   </div>
-</div>
-<div class="section-body" data-i="1" class:body-visible={bodyVisible[1]}>
-  <AgeGenreChart />
+  <div class="scene-body">
+    <AgeGenreChart />
+  </div>
 </div>
 
 
 <!-- section 03 — scatter -->
-<div class="section-header" data-i="2">
-  <div class="header-content">
-    {#if visible[2]}
-      <div in:fly={{ y: 30, duration: 800 }} out:fade={{ duration: 400 }}>
-        <div class="section-tag">03 · How you compare</div>
-        <h2>How do you compare?</h2>
-      </div>
-    {/if}
+<div class="scene" data-i="2" class:scene-visible={sceneVisible[2]}>
+  <div class="pinned-header">
+    <div class="section-tag">03 · How you compare</div>
+    <h2>How do you compare?</h2>
   </div>
-</div>
-<div class="section-body" data-i="2" class:body-visible={bodyVisible[2]}>
-  <CategoricalScatter />
+  <div class="scene-body">
+    <CategoricalScatter />
+  </div>
 </div>
 
 <!-- section 04 — glyph -->
-<div class="section-header" data-i="3">
-  <div class="header-content">
-    {#if visible[3]}
-      <div in:fly={{ y: 30, duration: 800 }} out:fade={{ duration: 400 }}>
-        <div class="section-tag">04 · Glyph exploration</div>
-        <h2>Every demographic at a glance.</h2>
-        <p>Each glyph represents an age × occupation group. The spokes show genre preferences, longer means higher average rating for that genre.</p>
-      </div>
-    {/if}
+<div data-i="3" class:scene-visible={sceneVisible[3]}>
+  <div class="pinned-header">
+    <div class="section-tag">04 · Glyph exploration</div>
+    <h2>Every demographic at a glance.</h2>
+    <p>Each glyph represents an age × occupation group. The spokes show genre preferences, longer means higher average rating for that genre.</p>
   </div>
-</div>
-<div class="section-body" data-i="3" class:body-visible={bodyVisible[3]}>
-  <GlyphChart />
+  <div class="scene-body">
+    <GlyphChart />
+  </div>
 </div>
 
 <footer>
@@ -162,14 +135,6 @@
 <style>
   :global(.scrolly) {
     padding: 0 60px;
-  }
-  .section-body {
-    opacity: 0;
-    transition: opacity 0.4s ease-out;
-  }
-  
-  .section-body.body-visible {
-    opacity: 1;
   }
 
   #intro-virtual { height: 200vh; }
@@ -254,6 +219,65 @@
     height: 36px;
     background: linear-gradient(to bottom, #2d3748, transparent);
   }
+.scene {
+    position: relative;
+    width: 100%;
+    margin-bottom: 50vh;
+    
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .scene.scene-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pinned-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 40px 60px 60px 60px; 
+    width: 100%; 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;
+    background: linear-gradient(to bottom, var(--bg-dark) 75%, transparent);
+    pointer-events: none; 
+  }
+
+  .scene-body {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+    margin-top: 20vh; 
+  }
+
+  .section-tag {
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .pinned-header h2 {
+    font-size: 40px;
+    color: var(--text-primary);
+    margin: 0 0 16px;
+    font-weight: 500;
+  }
+
+  .pinned-header p {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 800px;
+    line-height: 1.6;
+    margin: 0;
+  }
 
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
@@ -261,8 +285,11 @@
   }
 
   footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 32px 60px;
-    font-size: 12px;
+    font-size: 14px;
     color: #2d3748;
     border-top: 1px solid #1e2530;
     margin-top: 80px;

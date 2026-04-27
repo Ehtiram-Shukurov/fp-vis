@@ -247,20 +247,25 @@ function animateLine(path) {
         <p style="color: red">{error}</p>
 			  {:else}
 
-        {#if isExploreStep}
-          <div class="toggles" style="padding-top: 40px;">
-            {#each genreNames as genre}
-              {#if genre !== 'unknown'}
-                <button
-                  onclick={() => toggleGenre(genre)}
-                  style="border-color: {selected.includes(genre) ? genreColors[genre] : '#2d3748'}; color: {selected.includes(genre) ? genreColors[genre] : '#64748b'}"
-                >
-                  {genre}
-                </button>
-              {/if}
-            {/each}
-          </div>
-        {/if}
+        <div class="toggles" style="padding-top: 40px;">
+    {#each genreNames as genre}
+      {#if genre !== 'unknown'}
+        <button
+          onclick={() => toggleGenre(genre)}
+          disabled={!isExploreStep}
+          style="
+            border-color: {selected.includes(genre) ? genreColors[genre] : '#2d3748'}; 
+            color: {selected.includes(genre) ? genreColors[genre] : '#64748b'};
+            opacity: {isExploreStep ? 1 : 0.3};
+            cursor: {isExploreStep ? 'pointer' : 'default'};
+            transition: opacity 0.3s ease;
+          "
+        >
+          {genre}
+        </button>
+      {/if}
+    {/each}
+  </div>
 
         <div class="chart-wrap" bind:this={chartWrap}>
           <svg width={width + margin.left + margin.right} height={height + margin.top + margin.bottom}>
@@ -273,7 +278,17 @@ function animateLine(path) {
 
               {#each ageBuckets as bucket}
                 <text x={xScale(bucket.label)} y={height + 25} text-anchor="middle" fill="var(--text-muted)" font-size="15px">{bucket.label}</text>
-              {/each}
+                <rect 
+                  x={xScale(bucket.label) - (width / ageBuckets.length) / 2} 
+                  y={0} 
+                  width={width / ageBuckets.length} 
+                  height={height} 
+                  fill="transparent" 
+                  style="cursor: crosshair;"
+                  onmousemove={(e) => handleMouseMove(e, bucket.label)} 
+                  onmouseleave={handleMouseLeave} 
+                />
+                {/each}
 
               <line x1={0} x2={width} y1={height} y2={height} stroke="#2d3748" />
               <line x1={0} x2={0} y1={0} y2={height} stroke="#2d3748" />
