@@ -311,7 +311,7 @@ const thresholds = [0, 45, 95];
                 cx={xScale(point.dataCategory) + xScale.bandwidth() / 2}
                 cy={yScale(String(point.userRating)) + yScale.bandwidth() / 2}
                 r={0.4 * point.count}
-                fill={point.dataCategory===currentUserData && String(point.userRating)===String(userRating) ? "red" : "steelblue"}
+                fill={point.dataCategory===currentUserData && String(point.userRating)===String(userRating) ? "#6d49ff" : "steelblue"}
                 stroke="var(--bg-dark)"
                 stroke-width="2"
                 opacity={0.8}
@@ -327,15 +327,27 @@ const thresholds = [0, 45, 95];
               </text>
             {/each}
 
-            <circle class="data"
-              cx={xScale(currentUserData) + xScale.bandwidth() / 2}
-              cy={(userRating === -8) ? -20 : yScale(String(userRating)) + yScale.bandwidth() / 2}
-              r={10}
-              fill={(userRating === -8) ? "none" : "green"}
-              stroke={(userRating === -8) ? "none" : "green"}
-              stroke-width="2"
-              opacity={0.9}
-            />
+            {#if userRating != -8}
+              {@const cx = xScale(currentUserData) + xScale.bandwidth() / 2}
+              {@const cy = yScale(String(userRating)) + yScale.bandwidth() / 2}
+              {@const r = 20}
+              <g style="transform: translate({cx}px, {cy}px); transition: transform 1s ease-in-out;">
+                <polygon
+                  class="pulse"
+                  points={Array.from({length: 5}, (_, i) => {
+                    const outer = `${r * Math.sin((i * 4 * Math.PI) / 5)},${r * Math.cos((i * 4 * Math.PI) / 5)}`;
+                    const inner = `${(r/2) * Math.sin(((i * 4 + 2) * Math.PI) / 5)},${(r/2) * Math.cos(((i * 4 + 2) * Math.PI) / 5)}`;
+                    return `${outer} ${inner}`;
+                  }).join(' ')}
+                  fill="gold"
+                  stroke="gold"
+                  stroke-width="1.5"
+                  opacity={0.95}
+                />
+              </g>
+            {/if}
+
+            
 
             {#each ["1", "2", "3", "4", "5"] as yMark}
               <text x={usableArea.left - 10} y={yScale(yMark) + yScale.bandwidth() / 2} dominant-baseline="middle" fill="var(--text-muted)">{yMark}</text>
@@ -361,6 +373,25 @@ const thresholds = [0, 45, 95];
 </Scroll>
 
 <style>
+
+  @keyframes pulse {
+      0% {
+          transform: scale(.8);
+      }
+      50% {
+          transform: scale(1.1);
+      }
+      100% {
+          transform: scale(.8);
+      }
+    }
+
+  .pulse {
+          
+    animation: pulse 3s infinite;
+    transform-box: fill-box;        /* makes transform-origin relative to the element itself */
+    transform-origin: center;
+    }
   /* --- SETUP SECTION STYLES --- */
   .setup-center {
     width: 100%;
