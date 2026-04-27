@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte'
-  import { fly } from 'svelte/transition'
+  import { fly, fade } from 'svelte/transition'
   import Scroll from '$lib/components/Scroll.svelte'
   import ScrollyHist from '$lib/components/ScrollyHist.svelte'
   import AgeGenreChart from '$lib/components/AgeGenreChart.svelte'
@@ -9,19 +9,32 @@
 
   let introProgress = $state(0)
   let visible = $state([false, false, false, false])
+  let bodyVisible = $state([false, false, false, false]) // NEW: Tracks the charts
 
   onMount(() => {
-    const observer = new IntersectionObserver(entries => {
+    const headerObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         const i = parseInt(e.target.dataset.i)
-        if (e.isIntersecting) {
-          visible[i] = true
-          observer.unobserve(e.target)
-        }
+        visible[i] = e.isIntersecting
       })
-    }, { threshold: 0.1 })
+    }, { threshold: 0.65 })
 
-    document.querySelectorAll('.section-anchor').forEach(el => observer.observe(el))
+    document.querySelectorAll('.section-header').forEach((el, i) => {
+      el.dataset.i = i
+      headerObs.observe(el)
+    })
+
+    const bodyObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        const i = parseInt(e.target.dataset.i)
+        bodyVisible[i] = e.isIntersecting
+      })
+    }, { threshold: 0.03 }) // Triggers right as the body slides into view
+
+    document.querySelectorAll('.section-body').forEach((el, i) => {
+      el.dataset.i = i
+      bodyObs.observe(el)
+    })
   })
 </script>
 
@@ -78,109 +91,85 @@
 </Scroll>
 
 <!-- section 01 — occupation × genre -->
-<div class="section-header">
-  <div class="section-anchor" data-i="0"></div>
-  {#if visible[0]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">01 · Occupation × Genre</div>
-      <h2>Does your job change what you watch?</h2>
-      <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group.</p>
-    </div>
-  {/if}
+<div class="section-header" data-i="0">
+  <div class="header-content">
+    {#if visible[0]}
+      <div in:fly={{ y: 30, duration: 800 }} out:fade={{ duration: 400 }}>
+        <div class="section-tag">01 · Occupation × Genre</div>
+        <h2>Does your job change what you watch?</h2>
+        <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group.</p>
+      </div>
+    {/if}
+  </div>
 </div>
-<ScrollyHist />
-<div style="height: 40vh;"></div>
+
+<div class="section-body" data-i="0" class:body-visible={bodyVisible[0]}>
+  <ScrollyHist />
+</div>
 
 <!-- section 02 — age × genre -->
-<div class="section-header">
-  <div class="section-anchor" data-i="1"></div>
-  {#if visible[1]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">02 · Age × Genre</div>
-      <h2>Does age change what you enjoy?</h2>
-      <p>Genre preferences shift noticeably across age groups. Some genres climb steadily with age, others drop off sharply.</p>
-    </div>
-  {/if}
+<div class="section-header" data-i="1">
+  <div class="header-content">
+    {#if visible[1]}
+      <div in:fly={{ y: 30, duration: 800 }} out:fade={{ duration: 400 }}>
+        <div class="section-tag">02 · Age × Genre</div>
+        <h2>Does age change what you enjoy?</h2>
+        <p>Genre preferences shift noticeably across age groups. Some genres climb steadily with age, others drop off sharply.</p>
+      </div>
+    {/if}
+  </div>
 </div>
-<AgeGenreChart />
+<div class="section-body" data-i="1" class:body-visible={bodyVisible[1]}>
+  <AgeGenreChart />
+</div>
+
 
 <!-- section 03 — scatter -->
-<div class="section-header">
-  <div class="section-anchor" data-i="2"></div>
-  {#if visible[2]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">03 · How you compare</div>
-      <h2>How do you compare?</h2>
-    </div>
-  {/if}
+<div class="section-header" data-i="2">
+  <div class="header-content">
+    {#if visible[2]}
+      <div in:fly={{ y: 30, duration: 800 }} out:fade={{ duration: 400 }}>
+        <div class="section-tag">03 · How you compare</div>
+        <h2>How do you compare?</h2>
+      </div>
+    {/if}
+  </div>
 </div>
-<CategoricalScatter />
+<div class="section-body" data-i="2" class:body-visible={bodyVisible[2]}>
+  <CategoricalScatter />
+</div>
 
 <!-- section 04 — glyph -->
-<div class="section-header">
-  <div class="section-anchor" data-i="3"></div>
-  {#if visible[3]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">04 · Glyph exploration</div>
-      <h2>Every demographic at a glance.</h2>
-      <p>Each glyph represents an age × occupation group. The spokes show genre preferences, longer means higher average rating for that genre.</p>
-    </div>
-  {/if}
+<div class="section-header" data-i="3">
+  <div class="header-content">
+    {#if visible[3]}
+      <div in:fly={{ y: 30, duration: 800 }} out:fade={{ duration: 400 }}>
+        <div class="section-tag">04 · Glyph exploration</div>
+        <h2>Every demographic at a glance.</h2>
+        <p>Each glyph represents an age × occupation group. The spokes show genre preferences, longer means higher average rating for that genre.</p>
+      </div>
+    {/if}
+  </div>
 </div>
-<GlyphChart />
+<div class="section-body" data-i="3" class:body-visible={bodyVisible[3]}>
+  <GlyphChart />
+</div>
 
 <footer>
   <p>Dimension · CSCI 5609 · Spring 2025 · <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 100K dataset</a></p>
 </footer>
 
 <style>
-  :global(body) {
-    margin: 0;
-    background: #0d1117;
-    color: #e2e8f0;
-    font-family: sans-serif;
-    overflow-x: hidden;
-  }
-
   :global(.scrolly) {
     padding: 0 60px;
   }
-
-  .section-header {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 60px 60px 40px;
-    border-top: 1px solid #1e2530;
-    min-height: 60px;
+  .section-body {
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
   }
-
-  .section-anchor {
-    height: 0;
-    width: 0;
-  }
-
-  .section-tag {
-    font-size: 12px;
-    color: #4a5568;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 14px;
-  }
-
-  .section-header h2 {
-    font-size: 36px;
-    font-weight: 500;
-    color: #e2e8f0;
-    margin: 0 0 12px;
-    letter-spacing: -0.01em;
-  }
-
-  .section-header p {
-    font-size: 17px;
-    color: #64748b;
-    max-width: 600px;
-    line-height: 1.7;
-    margin: 0;
+  
+  .section-body.body-visible {
+    opacity: 1;
   }
 
   #intro-virtual { height: 200vh; }
@@ -200,49 +189,50 @@
   }
 
   .eyebrow {
-    font-size: 12px;
-    color: #4a5568;
-    letter-spacing: 0.1em;
+    font-size: 15px;
+    color: var(--text-muted, #64748b);
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    margin: 0 0 20px;
+    margin: 0 0 24px;
   }
 
   h1 {
-    font-size: clamp(60px, 10vw, 120px);
+    font-size: clamp(70px, 10vw, 130px);
     font-weight: 500;
-    color: #e2e8f0;
-    margin: 0 0 24px;
+    color: var(--text-primary, #e2e8f0);
+    margin: 0 0 32px;
     letter-spacing: -0.03em;
   }
 
   .intro-question {
-    font-size: clamp(16px, 2vw, 22px);
-    color: #64748b;
-    max-width: 580px;
-    line-height: 1.6;
-    margin: 0 0 28px;
-  }
-
-  .intro-explain {
-    font-size: 14px;
-    color: #64748b;
-    max-width: 580px;
-    line-height: 1.6;
-    margin: 20px 0 15px;
+    font-size: clamp(20px, 2.5vw, 28px);
+    color: var(--text-primary, #e2e8f0);
+    max-width: 700px;
+    line-height: 1.5;
+    margin: 0 0 40px;
   }
 
   .intro-stats {
     display: flex;
-    gap: 28px;
-    font-size: 13px;
-    color: #4a5568;
-    margin: 0 0 20px;
+    gap: 32px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-muted, #94a3b8);
+    margin: 0 0 40px; 
   }
 
   .intro-team {
-    font-size: 12px;
-    color: #2d3748;
-    margin: 0;
+    font-size: 15px;
+    color: var(--text-secondary, #64748b);
+    margin: 0 0 40px;
+  }
+
+  .intro-explain {
+    font-size: 18px;
+    color: var(--text-secondary, #94a3b8);
+    max-width: 750px;
+    line-height: 1.7;
+    margin: 0 0 24px;
   }
 
   .scroll-hint {
