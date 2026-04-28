@@ -206,9 +206,9 @@
   .intro-stats {
     display: flex;
     gap: 32px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
-    color: var(--text-muted, #cdd1d7);
+    color: var(--text-muted, #ffffff);
     margin: 0 0 40px; 
   }
 
