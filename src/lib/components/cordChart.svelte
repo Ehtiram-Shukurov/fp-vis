@@ -32,17 +32,19 @@
 	]
 
 	const ageBuckets = [
-    { label: '<18',   min: 0,  max: 17  },
-    { label: '18-24', min: 18, max: 24  },
-    { label: '25-34', min: 25, max: 34  },
-    { label: '35-44', min: 35, max: 44  },
-    { label: '45+', min: 45, max: 999  },
-  ]
+		{ label: '<18',   min: 0,  max: 17  },
+		{ label: '18-24', min: 18, max: 24  },
+		{ label: '25-34', min: 25, max: 34  },
+		{ label: '35-44', min: 35, max: 44  },
+		{ label: '45-54', min: 45, max: 54  },
+		{ label: '55-64', min: 55, max: 64  },
+		{ label: '65+',   min: 65, max: 999 },
+	];
 
 	const allAgeLabels = ageBuckets.map(b => b.label);
 	const margin = { top: 40, right: 60, bottom: 90, left: 60 };
   	let width = $state(1100); 
-  	let height = $state(560);
+  	let height = $state(750);
 
 	function coordKey(x, y)
 	{
