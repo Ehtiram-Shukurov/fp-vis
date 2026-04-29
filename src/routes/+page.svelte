@@ -1,6 +1,7 @@
 <script>
+// @ts-nocheck
   import { onMount } from 'svelte'
-  import { fly } from 'svelte/transition'
+  import { fly, fade } from 'svelte/transition'
   import Scroll from '$lib/components/Scroll.svelte'
   import ScrollyHist from '$lib/components/ScrollyHist.svelte'
   import AgeGenreChart from '$lib/components/AgeGenreChart.svelte'
@@ -9,20 +10,22 @@
   import CordChart from '$lib/components/cordChart.svelte'
 
   let introProgress = $state(0)
-  let visible = $state([false, false, false, false])
+  let sceneVisible = $state([false, false, false, false])
 
   onMount(() => {
-    const observer = new IntersectionObserver(entries => {
+    const sceneObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         const i = parseInt(e.target.dataset.i)
-        if (e.isIntersecting) {
-          visible[i] = true
-          observer.unobserve(e.target)
-        }
+        sceneVisible[i] = e.isIntersecting
       })
-    }, { threshold: 0.1 })
+    }, { 
+      threshold: 0.03
+    })
 
-    document.querySelectorAll('.section-anchor').forEach(el => observer.observe(el))
+    document.querySelectorAll('.scene').forEach((el, i) => {
+      el.dataset.i = i
+      sceneObs.observe(el)
+    })
   })
 </script>
 
@@ -40,29 +43,29 @@
         </p>
       {/if}
 
-      {#if introProgress > 55}
-        <div class="intro-stats" in:fly={{ y: 20, duration: 600 }}>
-          <span>100K ratings</span>
-          <span>943 users</span>
-          <span>1,682 movies</span>
-          <span>18 genres</span>
-        </div>
-      {/if}
-
-      {#if introProgress > 75}
+      {#if introProgress > 45}
         <p class="intro-team" in:fly={{ y: 15, duration: 500 }}>
           Dylan Lyon · Genevieve Gray · Ezra Shukurov · Jake O'Shaughnessy · Max Lalonde
         </p>
       {/if}
 
-      {#if introProgress > 85}
+      {#if introProgress > 65}
+        <div class="intro-stats" in:fly={{ y: 20, duration: 600 }}>
+          <span class="stat animate" data-target="100000"></span> ratings
+          <span class="stat animate" data-target="943"></span> users
+          <span class="stat animate" data-target="1682"></span> movies
+          <span class="stat animate" data-target="18"></span> genres
+        </div>
+      {/if}
+
+      {#if introProgress > 80}
         <p class="intro-explain" in:fly={{ y: 15, duration: 500 }}>
-          The following exploration considers a dataset 100,000 strong. It consists of data taken from a movie rating site wherein ratings for individual movies are one of [1, 2, 3, 4, 5] and each reviewer has self-reported their own demographic information.
+          These 100,000 ratings, collected from 1997-98, rate a movie on a solid scale from 1-5. Each rating correlated to a user who self-reports relevant demographic information.
         </p>
       {/if}
       {#if introProgress > 95}
         <p class="intro-explain" in:fly={{ y: 15, duration: 500 }}>
-          We will analyze this data, demonstrate the facts in the dataset, and provide some small hypotheses for explanation.
+          This data is analyzed and visualized to display concrete patterns and offer possible hypotheses. 
           Please continue scrolling and enjoy!
         </p>
       {/if}
@@ -78,55 +81,52 @@
 </Scroll>
 
 <!-- section 01 — occupation × genre -->
-<div class="section-header">
-  <div class="section-anchor" data-i="0"></div>
-  {#if visible[0]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">01 · Occupation × Genre</div>
-      <h2>Does your job change what you watch?</h2>
-      <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group.</p>
-    </div>
-  {/if}
+<div class="scene" data-i="0" class:scene-visible={sceneVisible[0]}>
+  <div class="pinned-header">
+    <div class="section-tag">01 · Occupation × Genre</div>
+    <h2>Does your job change what you watch?</h2>
+    <p>Some occupations rate certain genres noticeably higher or lower than others. Healthcare workers tend to rate Horror lower. Lawyers rate it higher than almost any other group.</p>
+  </div>
+  <div class="scene-body">
+    <ScrollyHist />
+  </div>
 </div>
-<ScrollyHist />
 
 <!-- section 02 — age × genre -->
-<div class="section-header">
-  <div class="section-anchor" data-i="1"></div>
-  {#if visible[1]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">02 · Age × Genre</div>
-      <h2>Does age change what you enjoy?</h2>
-      <p>Genre preferences shift noticeably across age groups. Some genres climb steadily with age, others drop off sharply.</p>
-    </div>
-  {/if}
+<div class="scene" data-i="1" class:scene-visible={sceneVisible[1]}>
+  <div class="pinned-header">
+    <div class="section-tag">02 · Age × Genre</div>
+    <h2>Does age change what you enjoy?</h2>
+    <p>Genre preferences shift noticeably across age groups. Some genres climb steadily with age, others drop off sharply.</p>
+  </div>
+  <div class="scene-body">
+    <AgeGenreChart />
+  </div>
 </div>
-<AgeGenreChart />
+
 
 <!-- section 03 — scatter -->
-<div class="section-header">
-  <div class="section-anchor" data-i="2"></div>
-  {#if visible[2]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">03 · How you compare</div>
-      <h2>How do you compare?</h2>
-    </div>
-  {/if}
+<div class="scene" data-i="2" class:scene-visible={sceneVisible[2]}>
+  <div class="pinned-header">
+    <div class="section-tag">03 · How you compare</div>
+    <h2>How do you compare?</h2>
+  </div>
+  <div class="scene-body">
+    <CategoricalScatter />
+  </div>
 </div>
-<CategoricalScatter />
 
 <!-- section 04 — glyph -->
-<div class="section-header">
-  <div class="section-anchor" data-i="3"></div>
-  {#if visible[3]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">04 · Glyph exploration</div>
-      <h2>Every demographic at a glance.</h2>
-      <p>Each glyph represents an age × occupation group. The spokes show genre preferences, longer means higher average rating for that genre.</p>
-    </div>
-  {/if}
+<div data-i="3" class:scene-visible={sceneVisible[3]}>
+  <div class="pinned-header">
+    <div class="section-tag">04 · Glyph exploration</div>
+    <h2>Every demographic at a glance.</h2>
+    <p>Each glyph represents an age × occupation group. The spokes show genre preferences, longer means higher average rating for that genre.</p>
+  </div>
+  <div class="scene-body">
+    <GlyphChart />
+  </div>
 </div>
-<GlyphChart />
 
 <!-- section 05 — cords -->
 <div class="section-header">
@@ -146,53 +146,35 @@
 </footer>
 
 <style>
-  :global(body) {
-    margin: 0;
-    background: #0d1117;
-    color: #e2e8f0;
-    font-family: sans-serif;
-    overflow-x: hidden;
+
+  @property --num {
+    syntax: "<integer>";
+    initial-value: 0;
+    inherits: false;
   }
+
+  .stat {
+    --num: 0;
+    counter-reset: num var(--num);
+  }
+
+  .stat::after {
+    content: counter(num);
+  }
+
+  /* One keyframe per unique target number */
+  @keyframes count-to-100000 { to { --num: 100000; } }
+  @keyframes count-to-943    { to { --num: 943; } }
+  @keyframes count-to-1682   { to { --num: 1682; } }
+  @keyframes count-to-18     { to { --num: 18; } }
+
+  .stat.animate[data-target="100000"] { animation: count-to-100000 2s ease forwards; }
+  .stat.animate[data-target="943"]    { animation: count-to-943    1.5s ease forwards; }
+  .stat.animate[data-target="1682"]   { animation: count-to-1682   1.8s ease forwards; }
+  .stat.animate[data-target="18"]     { animation: count-to-18     1s ease forwards; }
 
   :global(.scrolly) {
     padding: 0 60px;
-  }
-
-  .section-header {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 60px 60px 40px;
-    border-top: 1px solid #1e2530;
-    min-height: 60px;
-  }
-
-  .section-anchor {
-    height: 0;
-    width: 0;
-  }
-
-  .section-tag {
-    font-size: 12px;
-    color: #4a5568;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 14px;
-  }
-
-  .section-header h2 {
-    font-size: 36px;
-    font-weight: 500;
-    color: #e2e8f0;
-    margin: 0 0 12px;
-    letter-spacing: -0.01em;
-  }
-
-  .section-header p {
-    font-size: 17px;
-    color: #64748b;
-    max-width: 600px;
-    line-height: 1.7;
-    margin: 0;
   }
 
   #intro-virtual { height: 200vh; }
@@ -212,49 +194,50 @@
   }
 
   .eyebrow {
-    font-size: 12px;
-    color: #4a5568;
-    letter-spacing: 0.1em;
+    font-size: 15px;
+    color: var(--text-muted, #64748b);
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    margin: 0 0 20px;
+    margin: 0 0 24px;
   }
 
   h1 {
-    font-size: clamp(60px, 10vw, 120px);
+    font-size: clamp(70px, 10vw, 130px);
     font-weight: 500;
-    color: #e2e8f0;
-    margin: 0 0 24px;
+    color: var(--text-primary, #e2e8f0);
+    margin: 0 0 32px;
     letter-spacing: -0.03em;
   }
 
   .intro-question {
-    font-size: clamp(16px, 2vw, 22px);
-    color: #64748b;
-    max-width: 580px;
-    line-height: 1.6;
-    margin: 0 0 28px;
-  }
-
-  .intro-explain {
-    font-size: 14px;
-    color: #64748b;
-    max-width: 580px;
-    line-height: 1.6;
-    margin: 0 0 28px;
+    font-size: clamp(20px, 2.5vw, 28px);
+    color: var(--text-primary, #e2e8f0);
+    max-width: 700px;
+    line-height: 1.5;
+    margin: 0 0 40px;
   }
 
   .intro-stats {
     display: flex;
-    gap: 28px;
-    font-size: 13px;
-    color: #4a5568;
-    margin: 0 0 20px;
+    gap: 32px;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-muted, #ffffff);
+    margin: 0 0 40px; 
   }
 
   .intro-team {
-    font-size: 12px;
-    color: #2d3748;
-    margin: 0;
+    font-size: 15px;
+    color: var(--text-secondary, #64748b);
+    margin: 0 0 40px;
+  }
+
+  .intro-explain {
+    font-size: 18px;
+    color: var(--text-secondary, #94a3b8);
+    max-width: 750px;
+    line-height: 1.7;
+    margin: 0 0 24px;
   }
 
   .scroll-hint {
@@ -276,6 +259,65 @@
     height: 36px;
     background: linear-gradient(to bottom, #2d3748, transparent);
   }
+.scene {
+    position: relative;
+    width: 100%;
+    margin-bottom: 50vh;
+    
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .scene.scene-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pinned-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 40px 60px 60px 60px; 
+    width: 100%; 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;
+    background: linear-gradient(to bottom, var(--bg-dark) 75%, transparent);
+    pointer-events: none; 
+  }
+
+  .scene-body {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+    margin-top: 20vh; 
+  }
+
+  .section-tag {
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .pinned-header h2 {
+    font-size: 40px;
+    color: var(--text-primary);
+    margin: 0 0 16px;
+    font-weight: 500;
+  }
+
+  .pinned-header p {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 800px;
+    line-height: 1.6;
+    margin: 0;
+  }
 
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
@@ -283,8 +325,11 @@
   }
 
   footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 32px 60px;
-    font-size: 12px;
+    font-size: 14px;
     color: #2d3748;
     border-top: 1px solid #1e2530;
     margin-top: 80px;
