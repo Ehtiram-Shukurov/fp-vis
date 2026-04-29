@@ -549,15 +549,15 @@
 
 	.modal-backdrop {
 		position: fixed;
-		top: 0;
+		top: 100px;
 		left: 0;
 		width: 100vw;
-		height: 100vh;
+		height: 120vh;
 		background: rgba(0, 0, 0, 0.7);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		z-index: 1000;
+		z-index: 999999999;
 	}
 	.modal-box {
 		background: #1e2530;
@@ -570,6 +570,7 @@
 		display: flex;
 		flex-direction: column;
 		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+		margin-top: 30vh;
 	}
 	.modal-header {
 		display: flex;
