@@ -207,7 +207,7 @@ const thresholds = [0, 45, 95];
       {:else}
         <div class="setup-story">
           <h3>Enter your details</h3>
-          <p>Pick a movie you've seen. Then, enter your demographic info and personal rating. In the following visualization, your personal dot will appear highlighted green and/or red on the chart where you would fit in.</p>
+          <p>Pick a movie you've seen. Then, enter your demographic info and personal rating. In the following visualization, your personal dot will appear highlighted with a star and/or purple on the chart where you would fit in.</p>
           <p>Bigger dots mean more people gave that rating.</p>
         </div>
 
