@@ -8,9 +8,9 @@
   let showComparison = $state(false);
 
   const thresholds = [0, 12, 25, 35, 45, 55, 65, 75, 85, 95]
-let activeIndex = $derived(
-  thresholds.findLastIndex(t => progress >= t)
-)
+  let activeIndex = $derived(
+    thresholds.findLastIndex(t => progress >= t)
+  )
 
   let isExploreStep = $derived(activeIndex === 9);
 
