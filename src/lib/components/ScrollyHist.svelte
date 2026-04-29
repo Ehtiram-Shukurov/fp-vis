@@ -27,13 +27,13 @@
     },
     {
       label: "Healthcare workers",
-      description: "With an average of 2.9, Healthcare workers have the lowest average rating with an astounding 569 1-star ratings across the occupation. Furthermore they are one of the few demographics with matching median and mode. This may be explained by how difficult and crushing the healthcare profession can be day-to-day which later reflects into movie enjoyment.",
+      description: "With an average of 2.9, Healthcare workers have the lowest average rating with an astounding 569 1-star ratings across the occupation. Furthermore they are one of the few demographics with matching median and mode.",
       filterType: "genre",
       selectedGenre: "",
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
-      selectedOccupation: "healthcare",
+      selectedOccupation: "Healthcare",
     },
     {
       label: "Unemployed people",
