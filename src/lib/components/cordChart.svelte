@@ -11,6 +11,7 @@
 	let userMap = $state([]);
 	let allOccupations = $state([]);
 	let allRatings = $state([]);
+	let clickedCoordinates = $state(new Set());
 	
 	const demographics = [
 		'rounded average rating', 'occupation', 'age', 'gender'
@@ -45,6 +46,26 @@
   	const margin = { top: 40, right: 30, bottom: 80, left: 80 };
 	let width = $state(2000);
 	let height = $state(1200);
+
+	function coordKey(x, y)
+	{
+		return String(x) + " " + String(y);
+	}
+
+	function circleClick(x, y)
+	{
+		if(clickedCoordinates.has(coordKey(x, y)))
+		{
+			clickedCoordinates.delete(coordKey(x, y));
+		}
+		else
+		{
+			clickedCoordinates.add(coordKey(x, y));
+		}
+		
+		console.log(clickedCoordinates);
+		clickedCoordinates = new Set(clickedCoordinates);
+	}
 
   	onMount(async () => {
 		try {
@@ -125,51 +146,116 @@
 		<svg {width} {height}>
 			<g>
 				{#each userMap as user}
-					{#if user.gender === 'Male'}
-
-
-						<path
-							d={"M " + xScaleDemographic('gender') + " " + (yScaleGender(user.gender))
-							+ " L " + xScaleDemographic('age') + " " + (yScaleAge(user.age))
-							+ " L " + xScaleDemographic('occupation') + " " + (yScaleOccupation(user.occupation))
-							+ " L " + xScaleDemographic('rounded average rating') + " " + (yScaleRatings(String(user.avgRating)))}
-							stroke="#00aaff"
-							stroke-width="2"
-							stroke-opacity="0.05"
-							fill="none"
-						/>
-					{:else}
-						<path
-							d={"M " + xScaleDemographic('gender') + " " + (yScaleGender(user.gender))
-							+ " L " + xScaleDemographic('age') + " " + (yScaleAge(user.age))
-							+ " L " + xScaleDemographic('occupation') + " " + (yScaleOccupation(user.occupation))
-							+ " L " + xScaleDemographic('rounded average rating') + " " + (yScaleRatings(String(user.avgRating)))}
-							stroke="#f700a9"
-							stroke-width="2"
-							stroke-opacity="0.05"
-							fill="none"
-						/>
-					{/if}
+					<path
+						d={"M " + xScaleDemographic('gender') + " " + (yScaleGender(user.gender))
+						+ " L " + xScaleDemographic('age') + " " + (yScaleAge(user.age))
+						+ " L " + xScaleDemographic('occupation') + " " + (yScaleOccupation(user.occupation))
+						+ " L " + xScaleDemographic('rounded average rating') + " " + (yScaleRatings(String(user.avgRating)))}
+						stroke={clickedCoordinates.has(coordKey(xScaleDemographic('gender'), yScaleGender(user.gender))) ||
+								clickedCoordinates.has(coordKey(xScaleDemographic('age'), yScaleAge(user.age))) || 
+								clickedCoordinates.has(coordKey(xScaleDemographic('occupation'), yScaleOccupation(user.occupation))) || 
+								clickedCoordinates.has(coordKey(xScaleDemographic('rounded average rating'), yScaleRatings(String(user.avgRating)))) 
+								? '#c6cf5d' : user.gender === 'Male' ? "#00aaff" : "#f700a9"}
+						stroke-width="2"
+						stroke-opacity={clickedCoordinates.has(coordKey(xScaleDemographic('gender'), yScaleGender(user.gender))) ||
+										clickedCoordinates.has(coordKey(xScaleDemographic('age'), yScaleAge(user.age))) || 
+										clickedCoordinates.has(coordKey(xScaleDemographic('occupation'), yScaleOccupation(user.occupation))) || 
+										clickedCoordinates.has(coordKey(xScaleDemographic('rounded average rating'), yScaleRatings(String(user.avgRating)))) 
+										? "1" : "0.08"}
+						fill="none"
+					/>
 				{/each}
 				{#each demographics as xLabel}
 					<line x1={xScaleDemographic(xLabel)} x2={xScaleDemographic(xLabel)} y1="0" y2={height - 13} stroke="#808080" stroke-width="1" />
 					<text x={xScaleDemographic(xLabel)} y={height - 10} text-anchor="middle" dominant-baseline="middle" fill="#94a3b8" font-size="20px">{xLabel}</text>
 				{/each}
 				{#each genders as yLabel}
-					<circle cx={xScaleDemographic('gender')} cy={yScaleGender(yLabel)} r="18" fill="#0f6e56" stroke="black" stroke-width="2" opacity="1"/>
-					<text x={xScaleDemographic('gender')} y={yScaleGender(yLabel)} text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="10px">{yLabel}</text>
+					<circle
+						cx={xScaleDemographic('gender')}
+						cy={yScaleGender(yLabel)}
+						r="18"
+						on:click={() => circleClick(xScaleDemographic('gender'), yScaleGender(yLabel))}
+						fill={clickedCoordinates.has(coordKey(xScaleDemographic('gender'), yScaleGender(yLabel))) ? '#c6cf5d' : '#0f6e56'}
+						stroke="black"
+						stroke-width="2"
+						opacity="1"
+					/>
+					<text
+						x={xScaleDemographic('gender')}
+						y={yScaleGender(yLabel)}
+						on:click={() => circleClick(xScaleDemographic('gender'), yScaleGender(yLabel))}
+						text-anchor="middle"
+						dominant-baseline="middle"
+						fill={clickedCoordinates.has(coordKey(xScaleDemographic('gender'), yScaleGender(yLabel))) ? "#000000": "#e2e8f0"}
+						font-size="10px">
+						{yLabel}
+					</text>
 				{/each}
 				{#each allAgeLabels as yLabel}
-					<circle cx={xScaleDemographic('age')} cy={yScaleAge(yLabel)} r="18" fill="#0f6e56" stroke="black" stroke-width="2" opacity="1"/>
-					<text x={xScaleDemographic('age')} y={yScaleAge(yLabel)} text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="10px">{yLabel}</text>
+					<circle
+						cx={xScaleDemographic('age')}
+						cy={yScaleAge(yLabel)}
+						r="18"
+						on:click={() => circleClick(xScaleDemographic('age'), yScaleAge(yLabel))}
+						fill={clickedCoordinates.has(coordKey(xScaleDemographic('age'), yScaleAge(yLabel))) ? '#c6cf5d' : '#0f6e56'}
+						stroke="black"
+						stroke-width="2"
+						opacity="1"
+					/>
+					<text
+						x={xScaleDemographic('age')}
+						y={yScaleAge(yLabel)}
+						on:click={() => circleClick(xScaleDemographic('age'), yScaleAge(yLabel))}
+						text-anchor="middle"
+						dominant-baseline="middle"
+						fill={clickedCoordinates.has(coordKey(xScaleDemographic('age'), yScaleAge(yLabel))) ? "#000000": "#e2e8f0"}
+						font-size="10px">
+						{yLabel}
+					</text>
 				{/each}
 				{#each allOccupations as yLabel}
-					<circle cx={xScaleDemographic('occupation')} cy={yScaleOccupation(yLabel)} r="18" fill="#0f6e56" stroke="black" stroke-width="2" opacity="1"/>
-					<text x={xScaleDemographic('occupation')} y={yScaleOccupation(yLabel)} text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="10px">{yLabel}</text>
+					<circle
+						cx={xScaleDemographic('occupation')}
+						cy={yScaleOccupation(yLabel)}
+						r="18"
+						on:click={() => circleClick(xScaleDemographic('occupation'), yScaleOccupation(yLabel))}
+						fill={clickedCoordinates.has(coordKey(xScaleDemographic('occupation'), yScaleOccupation(yLabel))) ? '#c6cf5d' : '#0f6e56'}
+						stroke="black"
+						stroke-width="2"
+						opacity="1"
+					/>
+					<text
+						x={xScaleDemographic('occupation')}
+						y={yScaleOccupation(yLabel)}
+						on:click={() => circleClick(xScaleDemographic('occupation'), yScaleOccupation(yLabel))}
+						text-anchor="middle"
+						dominant-baseline="middle"
+						fill={clickedCoordinates.has(coordKey(xScaleDemographic('occupation'), yScaleOccupation(yLabel))) ? "#000000": "#e2e8f0"}
+						font-size="10px">
+						{yLabel}
+					</text>
 				{/each}
 				{#each ratings as yLabel}
-					<circle cx={xScaleDemographic('rounded average rating')} cy={yScaleRatings(yLabel)} r="18" fill="#0f6e56" stroke="black" stroke-width="2" opacity="1"/>
-					<text x={xScaleDemographic('rounded average rating')} y={yScaleRatings(yLabel)} text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="13px">{yLabel}</text>
+					<circle
+						cx={xScaleDemographic('rounded average rating')}
+						cy={yScaleRatings(yLabel)}
+						r="18"
+						on:click={() => circleClick(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))}
+						fill={clickedCoordinates.has(coordKey(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))) ? '#c6cf5d' : '#0f6e56'}
+						stroke="black"
+						stroke-width="2"
+						opacity="1"
+					/>
+					<text
+						x={xScaleDemographic('rounded average rating')}
+						y={yScaleRatings(yLabel)}
+						on:click={() => circleClick(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))}
+						text-anchor="middle"
+						dominant-baseline="middle"
+						fill={clickedCoordinates.has(coordKey(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))) ? "#000000": "#e2e8f0"}
+						font-size="10px">
+						{yLabel}
+					</text>
 				{/each}
 			</g>
 		</svg>
