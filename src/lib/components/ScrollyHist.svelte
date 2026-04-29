@@ -2,15 +2,15 @@
   import { Scroll } from "$lib";
   import RatingsChart from "./histogramParams.svelte";
   import RatingsHistogram from "./histogram.svelte";
-  import { fly } from "svelte/transition";
+  import { fly,fade } from "svelte/transition";
 
   let progress = $state(0);
   let showComparison = $state(false);
 
   const thresholds = [0, 12, 25, 35, 45, 55, 65, 75, 85, 95]
-let activeIndex = $derived(
-  thresholds.findLastIndex(t => progress >= t)
-)
+  let activeIndex = $derived(
+    thresholds.findLastIndex(t => progress >= t)
+  )
 
   let isExploreStep = $derived(activeIndex === 9);
 
@@ -121,15 +121,29 @@ let activeIndex = $derived(
 </script>
 
 <Scroll bind:progress debounce={50}>
-  {#each sections as section, i}
-    <div class="scroll-card" class:active={i === activeIndex}>
-      {#if i < 12}
-        <span class="step-num">{String(i + 1).padStart(2, '0')}</span>
-      {/if}
-      <h3>{section.label}</h3>
-      <p>{section.description}</p>
+  
+  <div class="sticky-text-wrap">
+    <div class="card-container">
+      {#key activeIndex} 
+        <div class="scroll-card active" 
+             in:fly={{ y: 20, duration: 600, delay: 200 }} 
+             out:fly={{ y: -20, duration: 400 }}>
+          
+          {#if activeIndex < 12}
+            <span class="step-num">{String(activeIndex + 1).padStart(2, '0')}</span>
+          {/if}
+          <h3>{sections[activeIndex].label}</h3>
+          <p>{sections[activeIndex].description}</p>
+        </div>
+      {/key}
     </div>
-  {/each}
+  </div>
+
+  <div class="scroll-track">
+    {#each sections.slice(0, -1) as _, i}
+      <div class="spacer"></div>
+    {/each}
+  </div>
 
   <svelte:fragment slot="viz">
     <div class="viz-wrapper">
@@ -176,40 +190,64 @@ let activeIndex = $derived(
 </Scroll>
 
 <style>
-  .scroll-card {
-    min-height: 60vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 28px 0;
-    border-bottom: 1px solid #1e2530;
-    opacity: 0.3;
-    transition: opacity 0.3s ease;
+.scroll-track {
+    width: 100%;
+  }
+  .spacer {
+    height: 120vh;
+  }
+  .spacer:last-child { 
+    height: 40vh; 
   }
 
-  .scroll-card.active {
-    opacity: 1;
+  .sticky-text-wrap {
+    position: sticky;
+    top: 30vh;
+    width: 100%;
+    height: 0;
+    z-index: 10;
+    overflow: visible;
+  }
+  .card-container {
+    position: relative;
+    width: 100%;
+  }
+
+  .scroll-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    
+    padding: 32px;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   }
 
   .step-num {
-    font-size: 12px;
-    color: #4a5568;
-    font-weight: 500;
-    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
   }
 
   h3 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 500;
-    color: #e2e8f0;
-    margin: 0 0 10px;
+    color: var(--text-primary);
+    margin: 0 0 12px;
   }
 
   p {
-    font-size: 15px;
-    color: #64748b;
-    line-height: 1.7;
-    max-width: 420px;
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.6;
     margin: 0;
   }
 
