@@ -120,7 +120,7 @@
   ];
 </script>
 
-<Scroll bind:progress debounce={50}>
+<Scroll bind:progress debounce={50} --scrolly-viz-width="2fr" --scrolly-story-width="1.5fr">
   
   <div class="sticky-text-wrap">
     <div class="card-container">
