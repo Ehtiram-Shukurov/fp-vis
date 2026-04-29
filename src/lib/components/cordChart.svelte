@@ -44,7 +44,7 @@
 	const allAgeLabels = ageBuckets.map(b => b.label);
 	const margin = { top: 40, right: 60, bottom: 90, left: 60 };
   	let width = $state(1100); 
-  	let height = $state(750);
+  	let height = $state(650);
 
 	function coordKey(x, y)
 	{
@@ -192,7 +192,7 @@
 					<circle
 						cx={xScaleDemographic('gender')}
 						cy={yScaleGender(yLabel)}
-						r="18"
+						r="17"
 						onclick={() => circleClick(xScaleDemographic('gender'), yScaleGender(yLabel))}
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('gender'), yScaleGender(yLabel))) ? '#c6cf5d' : '#0f6e56'}
 						stroke="black"
@@ -214,7 +214,7 @@
 					<circle
 						cx={xScaleDemographic('age')}
 						cy={yScaleAge(yLabel)}
-						r="18"
+						r="17"
 						onclick={() => circleClick(xScaleDemographic('age'), yScaleAge(yLabel))}
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('age'), yScaleAge(yLabel))) ? '#c6cf5d' : '#0f6e56'}
 						stroke="black"
@@ -236,7 +236,7 @@
 					<circle
 						cx={xScaleDemographic('occupation')}
 						cy={yScaleOccupation(yLabel)}
-						r="14"
+						r="12"
 						onclick={() => circleClick(xScaleDemographic('occupation'), yScaleOccupation(yLabel))}
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('occupation'), yScaleOccupation(yLabel))) ? '#c6cf5d' : '#0f6e56'}
 						stroke="black"
@@ -258,7 +258,7 @@
 					<circle
 						cx={xScaleDemographic('rounded average rating')}
 						cy={yScaleRatings(yLabel)}
-						r="18"
+						r="17"
 						onclick={() => circleClick(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))}
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))) ? '#c6cf5d' : '#0f6e56'}
 						stroke="black"
