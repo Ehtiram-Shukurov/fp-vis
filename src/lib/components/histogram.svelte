@@ -203,7 +203,7 @@
 			</div>
 		</div>
 
-		<div class="chart-area">
+		<div class="chart-area glass-panel">
 			<p>Total ratings: {filteredRatings.length} | Average: {avgRating}</p>
 
 			{#if filteredRatings.length === 0}
@@ -272,13 +272,6 @@
 		border-color: #1e2530;
 	}
 
-	.chart-area {
-		border: 1px solid #1e2530;
-		padding: 20px;
-		border-radius: 5px;
-		background: transparent;
-		color: #64748b;
-	}
 
 	.histogram {
 		display: flex;

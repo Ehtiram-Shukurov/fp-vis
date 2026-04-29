@@ -58,9 +58,49 @@ p {
 }
 
 .sticky-text-wrap {
-  top: 42vh !important; 
+  top: 45vh !important; 
 }
 
 .viz-wrapper, .center {
   padding-top: 22vh !important; 
+}
+
+.global-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #63b3ed, #fc814a);
+  z-index: 1000;
+  transition: width 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ambient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background: radial-gradient(circle at 15% 20%, rgba(99, 179, 237, 0.08), transparent 40%),
+              radial-gradient(circle at 85% 80%, rgba(252, 129, 74, 0.08), transparent 40%),
+              radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.05), transparent 60%);
+  animation: breathe 12s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes breathe {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.1); }
+}
+
+.glass-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 32px;
+  box-sizing: border-box;
 }

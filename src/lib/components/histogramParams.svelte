@@ -121,7 +121,7 @@
 	{:else if error}
 		<p style="color: red;">{error}</p>
 	{:else}
-		<div class="chart-area">
+		<div class="chart-area glass-panel">
 			<p class="chart-title">{chartLabel}</p>
 			<p class="chart-meta">
 				Total ratings: {filteredRatings.length} | Average: {avgRating}
@@ -165,14 +165,6 @@
 		font-family: Arial, sans-serif;
 		background: transparent;
 		color: #e2e8f0;
-	}
-
-	.chart-area {
-		border: 1px solid #1e2530;
-		padding: 20px;
-		border-radius: 5px;
-		background: transparent;
-		color: #64748b;
 	}
 
 	.chart-title {

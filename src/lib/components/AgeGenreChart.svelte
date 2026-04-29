@@ -17,9 +17,7 @@
     { label: '18-24', min: 18, max: 24  },
     { label: '25-34', min: 25, max: 34  },
     { label: '35-44', min: 35, max: 44  },
-    { label: '45-54', min: 45, max: 54  },
-    { label: '55-64', min: 55, max: 64  },
-    { label: '65+',   min: 65, max: 999 },
+    { label: '45+', min: 45, max: 999  },
   ]
 
 
@@ -58,7 +56,7 @@ const steps = [
 
 
 
-const margin = { top: 40, right: 100, bottom: 40, left: 50 }
+const margin = { top: 30, right: 80, bottom: 70, left: 60 }
 const width = 800 - margin.left - margin.right
 const height = 380 - margin.top - margin.bottom
 
@@ -246,6 +244,7 @@ function animateLine(path) {
       {:else if error}
         <p style="color: red">{error}</p>
 			  {:else}
+        <div class="glass-panel">
 
         <div class="toggles" style="padding-top: 40px;">
     {#each genreNames as genre}
@@ -270,14 +269,16 @@ function animateLine(path) {
         <div class="chart-wrap" bind:this={chartWrap}>
           <svg width={width + margin.left + margin.right} height={height + margin.top + margin.bottom}>
             <g transform="translate({margin.left}, {margin.top})">
+            <text x={-25} y={-15} text-anchor="middle" fill="var(--text-secondary)" font-size="16px" font-weight="500">Rating</text>
 
               {#each yTicks as tick}
-                <line x1={0} x2={width} y1={yScale(tick)} y2={yScale(tick)} stroke="var(--border-subtle)" stroke-dasharray="3,3" />
-                <text x={-10} y={yScale(tick)} text-anchor="end" dominant-baseline="middle" fill="var(--text-muted)" font-size="15px">{tick}</text>
+                <line x1={0} x2={width} y1={yScale(tick)} y2={yScale(tick)} stroke="rgba(255, 255, 255, 0.2)" stroke-dasharray="4,4" />
+                <text x={-15} y={yScale(tick)} text-anchor="end" dominant-baseline="middle" fill="var(--text-secondary)" font-size="16px">{tick}</text>
               {/each}
 
               {#each ageBuckets as bucket}
-                <text x={xScale(bucket.label)} y={height + 25} text-anchor="middle" fill="var(--text-muted)" font-size="15px">{bucket.label}</text>
+                <text x={xScale(bucket.label)} y={height + 30} text-anchor="middle" fill="var(--text-secondary)" font-size="16px">{bucket.label}</text>
+                
                 <rect 
                   x={xScale(bucket.label) - (width / ageBuckets.length) / 2} 
                   y={0} 
@@ -288,7 +289,9 @@ function animateLine(path) {
                   onmousemove={(e) => handleMouseMove(e, bucket.label)} 
                   onmouseleave={handleMouseLeave} 
                 />
-                {/each}
+              {/each}
+
+              <text x={width / 2} y={height + 65} text-anchor="middle" fill="var(--text-secondary)" font-size="16px" font-weight="500">Age Group</text>
 
               <line x1={0} x2={width} y1={height} y2={height} stroke="#2d3748" />
               <line x1={0} x2={0} y1={0} y2={height} stroke="#2d3748" />
@@ -329,6 +332,7 @@ function animateLine(path) {
               {/each}
             </div>
           {/if}
+        </div>
         </div>
       {/if}
     </div>

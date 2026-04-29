@@ -128,8 +128,8 @@ const thresholds = [0, 45, 95];
 
   const margin = {
     top: 15,
-    bottom: 50,
-    left: 30,
+    bottom: 80,
+    left: 60,
     right: 10,
   };
 
@@ -260,7 +260,6 @@ const thresholds = [0, 45, 95];
     </div>
   </svelte:fragment>
 </Scroll>
-
 <Scroll bind:progress={myProgress} --scrolly-viz-width="1.4fr" debounce={50}>
   
   <div class="sticky-text-wrap">
@@ -298,12 +297,12 @@ const thresholds = [0, 45, 95];
 
   <svelte:fragment slot="viz">
     <div class="center">
-      <p style="color: var(--text-secondary); font-size: 18px; margin-bottom: 12px;">
+      <p style="color: var(--text-secondary); font-size: 18px; margin-bottom: 16px;">
         Total ratings: {filteredRatings.length} | Average: {avgRating}
       </p>
       
-      <div class="border glass-panel">
-        <svg {height} width=100% viewBox={`0 0 ${width} ${height}`}>
+      <div class="glass-panel" style="padding: 40px;">
+        <svg {height} width="100%" style="min-height: 500px;" viewBox={`0 0 ${width} ${height}`}>
           <g>
             {#each graphPoints as point}
               <circle class="data"
@@ -311,18 +310,23 @@ const thresholds = [0, 45, 95];
                 cx={xScale(point.dataCategory) + xScale.bandwidth() / 2}
                 cy={yScale(String(point.userRating)) + yScale.bandwidth() / 2}
                 r={0.4 * point.count}
-                fill={point.dataCategory===currentUserData && String(point.userRating)===String(userRating) ? "#6d49ff" : "steelblue"}
-                stroke="var(--bg-dark)"
+                fill={point.dataCategory===currentUserData && String(point.userRating)===String(userRating) 
+                  ? "rgba(139, 92, 246, 0.4)"
+                  : "rgba(56, 189, 248, 0.2)"}
+                stroke={point.dataCategory===currentUserData && String(point.userRating)===String(userRating) 
+                  ? "rgba(139, 92, 246, 1)" 
+                  : "rgba(56, 189, 248, 0.9)"}
                 stroke-width="2"
-                opacity={0.8}
               />
               <text class="data"
                 transition:fly={{ y: 200, duration: 1000 }} 
                 x={xScale(point.dataCategory) + xScale.bandwidth() / 2}
-                y={yScale(String(point.userRating)) + yScale.bandwidth() / 2 - (0.4 * point.count + 6)} 
+                y={yScale(String(point.userRating)) + yScale.bandwidth() / 2 - (0.4 * point.count + 8)} 
                 text-anchor="middle"
                 dominant-baseline="middle"
-                fill="var(--text-primary)">
+                fill="var(--text-primary)"
+                font-size="14px"
+                font-weight="500">
                 {point.count}
               </text>
             {/each}
@@ -330,19 +334,17 @@ const thresholds = [0, 45, 95];
             {#if userRating != -8}
               {@const cx = xScale(currentUserData) + xScale.bandwidth() / 2}
               {@const cy = yScale(String(userRating)) + yScale.bandwidth() / 2}
-              {@const r = 20}
-              <g style="transform: translate({cx}px, {cy}px); transition: transform 1s ease-in-out;">
+              {@const r = 16} <g style="transform: translate({cx}px, {cy}px); transition: transform 1s ease-in-out;">
+                <circle r={r} fill="rgba(250, 204, 21, 0.4)" class="pulse-ring" />
+                
                 <polygon
-                  class="pulse"
+                  class="star-core"
                   points={Array.from({length: 5}, (_, i) => {
                     const outer = `${r * Math.sin((i * 4 * Math.PI) / 5)},${r * Math.cos((i * 4 * Math.PI) / 5)}`;
                     const inner = `${(r/2) * Math.sin(((i * 4 + 2) * Math.PI) / 5)},${(r/2) * Math.cos(((i * 4 + 2) * Math.PI) / 5)}`;
                     return `${outer} ${inner}`;
                   }).join(' ')}
-                  fill="gold"
-                  stroke="gold"
-                  stroke-width="1.5"
-                  opacity={0.95}
+                  fill="#facc15"
                 />
               </g>
             {/if}
@@ -350,21 +352,21 @@ const thresholds = [0, 45, 95];
             
 
             {#each ["1", "2", "3", "4", "5"] as yMark}
-              <text x={usableArea.left - 10} y={yScale(yMark) + yScale.bandwidth() / 2} dominant-baseline="middle" fill="var(--text-muted)">{yMark}</text>
+              <text x={usableArea.left - 10} y={yScale(yMark) + yScale.bandwidth() / 2} dominant-baseline="middle" fill="var(--text-primary)">{yMark}</text>
             {/each}
 
             {#each xAxisCategories as xMark}
-              <text x={xScale(xMark) + xScale.bandwidth() / 2} y={usableArea.bottom} text-anchor="middle" transform="rotate(-45, {xScale(xMark) + xScale.bandwidth() / 2}, {usableArea.bottom})" fill="var(--text-muted)">{xMark}</text>
+              <text x={xScale(xMark) + xScale.bandwidth() / 2} y={usableArea.bottom +25} text-anchor="end" transform="rotate(-45, {xScale(xMark) + xScale.bandwidth() / 2}, {usableArea.bottom +25})" fill="var(--text-primary)">{xMark}</text>
             {/each}
 
-            <line 
-              x1={usableArea.left+8}
-              x2={usableArea.left+8}
-              y1={usableArea.top}
-              y2={usableArea.bottom}
-              stroke="var(--border-subtle)"
-              stroke-width="1"
-            ></line>
+            <line x1={usableArea.left+8} 
+            x2={usableArea.left+8} 
+            y1={usableArea.top} 
+            y2={usableArea.bottom + 10} 
+            stroke="rgba(255, 255, 255, 0.2)" 
+            stroke-width="1.5">
+
+            </line>
           </g>
         </svg>
       </div>
@@ -385,13 +387,20 @@ const thresholds = [0, 45, 95];
           transform: scale(.8);
       }
     }
+    @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
 
-  .pulse {
-          
-    animation: pulse 3s infinite;
-    transform-box: fill-box;        /* makes transform-origin relative to the element itself */
+  .pulse-ring {
+    animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
     transform-origin: center;
-    }
+    transform-box: fill-box;
+  }
+
+  .star-core {
+    filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.6));
+  }
   /* --- SETUP SECTION STYLES --- */
   .setup-center {
     width: 100%;
@@ -514,13 +523,6 @@ const thresholds = [0, 45, 95];
     display: flex;
     flex-direction: column;
     padding-top: 80px;
-  }
-
-  .border {
-    border: 1px solid var(--border-subtle);
-    background-color: var(--bg-card);
-    border-radius: 12px;
-    padding: 24px;
   }
 
   .data {

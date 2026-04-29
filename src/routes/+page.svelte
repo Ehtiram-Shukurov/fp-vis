@@ -10,7 +10,15 @@
   import CordChart from '$lib/components/cordChart.svelte'
 
   let introProgress = $state(0)
-  let sceneVisible = $state([false, false, false, false])
+  let sceneVisible = $state([false, false, false, false, false])
+  let scrollY = $state(0)
+  let maxScroll = $state(1)
+  
+  $effect(() => {
+    maxScroll = document.documentElement.scrollHeight - window.innerHeight
+  })
+
+  let totalProgress = $derived(Math.min(100, Math.max(0, (scrollY / maxScroll) * 100)))
 
   onMount(() => {
     const sceneObs = new IntersectionObserver(entries => {
@@ -28,18 +36,21 @@
     })
   })
 </script>
+<svelte:window bind:scrollY />
 
-<!-- intro -->
+<div class="ambient-bg"></div>
+<div class="global-progress" style="width: {totalProgress}%"></div>
+
 <Scroll bind:progress={introProgress} --scrolly-story-width="0">
   <div id="intro-virtual"></div>
   <svelte:fragment slot="viz">
     <div class="intro-hero">
       <p class="eyebrow">CSCI 5609 · MovieLens 100K · 1997–98</p>
-      <h1>Dimension</h1>
+      <h1>How does the demographic of users change how they watch movies?</h1>
 
       {#if introProgress > 25}
         <p class="intro-question" in:fly={{ y: 30, duration: 700 }}>
-          How does the demographic of users change how they watch movies?
+          Group Dimension
         </p>
       {/if}
 
@@ -117,7 +128,7 @@
 </div>
 
 <!-- section 04 — glyph -->
-<div data-i="3" class:scene-visible={sceneVisible[3]}>
+<div class="scene static-scene" data-i="3" class:scene-visible={sceneVisible[3]}>
   <div class="pinned-header">
     <div class="section-tag">04 · Glyph exploration</div>
     <h2>Every demographic at a glance.</h2>
@@ -129,17 +140,16 @@
 </div>
 
 <!-- section 05 — cords -->
-<div class="section-header">
-  <div class="section-anchor" data-i="3"></div>
-  {#if visible[3]}
-    <div in:fly={{ y: 30, duration: 600 }}>
-      <div class="section-tag">TODO: Fill</div>
-      <h2>TODO: Fill</h2>
-      <p>TODO: Fill</p>
-    </div>
-  {/if}
+<div class="scene static-scene" data-i="4" class:scene-visible={sceneVisible[4]}>
+  <div class="pinned-header">
+    <div class="section-tag">05 · Cords exploration</div>
+    <h2>Demographic connections</h2>
+    <p>todo</p>
+  </div>
+  <div class="scene-body">
+      <CordChart />
+  </div>
 </div>
-<CordChart />
 
 <footer>
   <p>Dimension · CSCI 5609 · Spring 2025 · <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 100K dataset</a></p>
@@ -190,7 +200,7 @@
     text-align: center;
     padding: 0 40px;
     box-sizing: border-box;
-    background: #0d1117;
+    background:transparent;
   }
 
   .eyebrow {
@@ -202,41 +212,56 @@
   }
 
   h1 {
-    font-size: clamp(70px, 10vw, 130px);
-    font-weight: 500;
-    color: var(--text-primary, #e2e8f0);
-    margin: 0 0 32px;
-    letter-spacing: -0.03em;
+    font-size: clamp(36px, 5vw, 64px); 
+    font-weight: 600;
+    color: var(--text-primary);
+    text-shadow: 0 2px 20px rgba(255, 255, 255, 0.15); /* The cinematic glow */
+    max-width: 1000px;
+    line-height: 1.25;
+    margin: 0 0 24px;
+    letter-spacing: -0.01em;
   }
 
   .intro-question {
-    font-size: clamp(20px, 2.5vw, 28px);
-    color: var(--text-primary, #e2e8f0);
-    max-width: 700px;
-    line-height: 1.5;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 500;
+    color: var(--text-primary);
+    text-shadow: 0 2px 15px rgba(255, 255, 255, 0.2);
+    margin: 0 0 40px;
+    letter-spacing: 0.05em;
+  }
+
+  .eyebrow {
+    font-size: 15px;
+    color: var(--text-muted);
+    text-shadow: 0 1px 8px rgba(148, 163, 184, 0.3);
+    letter-spacing: 0.15em;
     margin: 0 0 40px;
   }
 
   .intro-stats {
     display: flex;
     gap: 32px;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
-    color: var(--text-muted, #ffffff);
+    color: var(--text-primary);
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
     margin: 0 0 40px; 
   }
 
   .intro-team {
-    font-size: 15px;
-    color: var(--text-secondary, #64748b);
+    font-size: 16px;
+    color: var(--text-secondary);
+    text-shadow: 0 2px 8px rgba(203, 213, 225, 0.15);
     margin: 0 0 40px;
   }
 
   .intro-explain {
     font-size: 18px;
-    color: var(--text-secondary, #94a3b8);
+    color: var(--text-secondary);
     max-width: 750px;
     line-height: 1.7;
+    text-shadow: 0 1px 5px rgba(203, 213, 225, 0.1);
     margin: 0 0 24px;
   }
 
@@ -336,4 +361,12 @@
   }
 
   footer a { color: #2d3748; }
+
+  .scene.static-scene {
+    margin-bottom: 15vh;
+  }
+
+  .scene.static-scene .scene-body {
+    margin-top: 5vh;
+  }
 </style>
