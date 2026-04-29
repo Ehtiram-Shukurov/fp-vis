@@ -6,6 +6,7 @@
   import AgeGenreChart from '$lib/components/AgeGenreChart.svelte'
   import CategoricalScatter from '$lib/components/categoricalScatter.svelte'
   import GlyphChart from '$lib/components/GlyphChart.svelte'
+  import CordChart from '$lib/components/cordChart.svelte'
 
   let introProgress = $state(0)
   let visible = $state([false, false, false, false])
@@ -126,6 +127,19 @@
   {/if}
 </div>
 <GlyphChart />
+
+<!-- section 05 — cords -->
+<div class="section-header">
+  <div class="section-anchor" data-i="3"></div>
+  {#if visible[3]}
+    <div in:fly={{ y: 30, duration: 600 }}>
+      <div class="section-tag">TODO: Fill</div>
+      <h2>TODO: Fill</h2>
+      <p>TODO: Fill</p>
+    </div>
+  {/if}
+</div>
+<CordChart />
 
 <footer>
   <p>Dimension · CSCI 5609 · Spring 2025 · <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 100K dataset</a></p>
