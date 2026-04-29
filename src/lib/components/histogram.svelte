@@ -203,7 +203,7 @@
 			</div>
 		</div>
 
-		<div class="chart-area">
+		<div class="glass-panel">
 			<p>Total ratings: {filteredRatings.length} | Average: {avgRating}</p>
 
 			{#if filteredRatings.length === 0}
@@ -217,12 +217,12 @@
 							<div
 								class="bar"
 								style="
-										height: {(item.count / maxCount) * 250}px;
-										--bar-height: {(item.count / maxCount) * 250}px;
-										background-color: {item.star <= 2 ? '#e74c3c' : item.star === 3 ? '#f39c12' : '#2ecc71'};
-										animation-delay: {(item.star - 1) * 150}ms
-									"
-							></div>
+								height: {(item.count / maxCount) * 250}px;
+								--bar-height: {(item.count / maxCount) * 250}px;
+								--bar-color: {item.star <= 2 ? '#ef4444' : item.star === 3 ? '#facc15' : '#10b981'};
+								animation-delay: {(item.star - 1) * 150}ms;
+								"
+              ></div>
 							<span class="bar-label">{item.star} star</span>
 						</div>
 					{/each}
@@ -272,13 +272,6 @@
 		border-color: #1e2530;
 	}
 
-	.chart-area {
-		border: 1px solid #1e2530;
-		padding: 20px;
-		border-radius: 5px;
-		background: transparent;
-		color: #64748b;
-	}
 
 	.histogram {
 		display: flex;
@@ -295,25 +288,28 @@
 		flex: 1;
 	}
 
-	.bar {
-		width: 100%;
-		min-height: 2px;
-		border-radius: 3px 3px 0 0;
-	}
+  .bar {
+    width: 100%;
+    min-height: 2px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(to top, transparent, color-mix(in srgb, var(--bar-color) 100%, transparent));
+    border-top: 2px solid var(--bar-color);
+    box-shadow: 0 -10px 25px color-mix(in srgb, var(--bar-color) 30%, transparent);
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
 	.bar-count {
-		margin-bottom: 5px;
-		font-size: 14px;
-		color: #94a3b8;
-	}
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
 
 	.bar-label {
-		margin-top: 8px;
-		font-size: 13px;
-		color: #64748b;
+		margin-top: 12px;
+		font-size: 15px;
+		font-weight: 500;
+		color: var(--text-secondary);
 	}
-
-.bar {
-  transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
 </style>

@@ -121,7 +121,7 @@
 	{:else if error}
 		<p style="color: red;">{error}</p>
 	{:else}
-		<div class="chart-area">
+		<div class="glass-panel">
 			<p class="chart-title">{chartLabel}</p>
 			<p class="chart-meta">
 				Total ratings: {filteredRatings.length} | Average: {avgRating}
@@ -144,12 +144,14 @@
 						<div class="bar-wrapper">
 							<span class="bar-count">{item.count}</span>
 							<div
-								class="bar"
-								style="
-									height: {(item.count / maxCount) * 250}px;
-									background-color: {item.star <= 2 ? '#e74c3c' : item.star === 3 ? '#f39c12' : '#2ecc71'};
-								"
-							></div>
+                class="bar"
+                style="
+                  height: {(item.count / maxCount) * 250}px;
+                  --bar-height: {(item.count / maxCount) * 250}px;
+                  --bar-color: {item.star <= 2 ? '#ef4444' : item.star === 3 ? '#facc15' : '#10b981'};
+                  animation-delay: {(item.star - 1) * 150}ms;
+                "
+              ></div>
 							<span class="bar-label">{item.star} star</span>
 						</div>
 					{/each}
@@ -167,37 +169,36 @@
 		color: #e2e8f0;
 	}
 
-	.chart-area {
-		border: 1px solid #1e2530;
-		padding: 20px;
-		border-radius: 5px;
-		background: transparent;
-		color: #64748b;
-	}
+  .chart-title{
+    font-size: 22px;   
+    font-weight: 700;
+    color: var(--text-primary, #f8fafc);
+    margin-bottom: 12px;
+  }
 
-	.chart-title {
-		font-size: 18px;
-		font-weight: bold;
-		color: #e2e8f0;
-		margin-bottom: 4px;
-	}
-
-	.chart-meta {
-		margin-bottom: 16px;
-		font-size: 14px;
-	}
+  .chart-meta{
+    font-size: 16px;
+    color: var(--text-secondary, #e2e8f0);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
 
 	.demographic-tag {
-		display: inline-block;
-		margin-left: 10px;
-		background: #1e2530;
-		border: 1px solid #2d3748;
-		border-radius: 12px;
-		padding: 2px 10px;
-		font-size: 12px;
-		color: #94a3b8;
-	}
-
+    display: inline-block;
+    margin-left: 12px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary, #f8fafc);
+    text-transform: uppercase;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
 	.histogram {
 		display: flex;
 		align-items: flex-end;
@@ -206,6 +207,7 @@
 		padding-top: 30px;
 	}
 
+
 	.bar-wrapper {
 		display: flex;
 		flex-direction: column;
@@ -213,23 +215,30 @@
 		flex: 1;
 	}
 
-	.bar {
-		width: 100%;
-		min-height: 2px;
-		border-radius: 3px 3px 0 0;
-		transition: height 0.6s ease, background-color 0.4s ease;
-	}
+
+  .bar {
+    width: 100%;
+    min-height: 2px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(to top, transparent, color-mix(in srgb, var(--bar-color) 100%, transparent));
+    border-top: 2px solid var(--bar-color);
+    box-shadow: 0 -10px 25px color-mix(in srgb, var(--bar-color) 30%, transparent);
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
 	.bar-count {
-		margin-bottom: 5px;
-		font-size: 14px;
-		color: #94a3b8;
-	}
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
 
 	.bar-label {
-		margin-top: 8px;
-		font-size: 13px;
-		color: #64748b;
+		margin-top: 12px;
+		font-size: 15px;
+		font-weight: 500;
+		color: var(--text-secondary);
 	}
 
 

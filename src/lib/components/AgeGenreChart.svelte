@@ -4,6 +4,7 @@
   import * as d3 from 'd3'
   import { genreColors } from '$lib/genreColors'
   import { Scroll } from '$lib'
+  import { fly, fade } from 'svelte/transition'
 
   const genreNames = [
     'unknown', 'Action', 'Adventure', 'Animation', "Children's", 'Comedy',
@@ -16,9 +17,7 @@
     { label: '18-24', min: 18, max: 24  },
     { label: '25-34', min: 25, max: 34  },
     { label: '35-44', min: 35, max: 44  },
-    { label: '45-54', min: 45, max: 54  },
-    { label: '55-64', min: 55, max: 64  },
-    { label: '65+',   min: 65, max: 999 },
+    { label: '45+', min: 45, max: 999  },
   ]
 
 
@@ -57,7 +56,7 @@ const steps = [
 
 
 
-const margin = { top: 20, right: 30, bottom: 40, left: 50 }
+const margin = { top: 30, right: 80, bottom: 70, left: 60 }
 const width = 800 - margin.left - margin.right
 const height = 380 - margin.top - margin.bottom
 
@@ -73,8 +72,8 @@ let tooltipAge = $state('')
 let tooltipRows = $state([])
 let chartWrap
 
-const thresholds = [10, 30, 45, 60, 75, 90]
-let activeIndex = $derived(thresholds.findLastIndex(t => progress >= t))
+const thresholds = [0, 19, 38, 57, 76, 95];
+let activeIndex = $derived(Math.max(0, thresholds.findLastIndex(t => progress >= t)))
 let chartIndex = $derived(Math.max(activeIndex, 0))
 let isExploreStep = $derived(chartIndex === steps.length - 1)
 let selected = $derived(isExploreStep ? manualSelected : steps[chartIndex].genres)
@@ -213,14 +212,30 @@ function animateLine(path) {
   }
 </script>
 
-<Scroll bind:progress debounce={200}>
-  {#each steps as step, i}
-    <div class="scroll-card" class:active={i === activeIndex}>
-      {#if i < 3}<span class="step-num">{String(i + 1).padStart(2, '0')}</span>{/if}
-      <h3>{step.label}</h3>
-      <p>{step.body}</p>
+<Scroll bind:progress debounce={50}>
+  
+  <div class="sticky-text-wrap">
+    <div class="card-container">
+      {#key activeIndex} 
+        <div class="scroll-card active" 
+             in:fly={{ y: 20, duration: 600, delay: 200 }} 
+             out:fly={{ y: -20, duration: 400 }}>
+          
+          {#if activeIndex < steps.length - 1}
+            <span class="step-num">{String(activeIndex + 1).padStart(2, '0')}</span>
+          {/if}
+          <h3>{steps[activeIndex].label}</h3>
+          <p>{steps[activeIndex].body}</p>
+        </div>
+      {/key}
     </div>
-  {/each}
+  </div>
+
+  <div class="scroll-track">
+    {#each steps as _, i}
+      <div class="spacer"></div>
+    {/each}
+  </div>
 
   <svelte:fragment slot="viz">
     <div class="viz-wrapper">
@@ -229,53 +244,82 @@ function animateLine(path) {
       {:else if error}
         <p style="color: red">{error}</p>
 			  {:else}
+        <div class="glass-panel">
 
-        {#if isExploreStep}
-          <div class="toggles" style="padding-top: 40px;">
-            {#each genreNames as genre}
-              {#if genre !== 'unknown'}
-                <button
-                  onclick={() => toggleGenre(genre)}
-                  style="border-color: {selected.includes(genre) ? genreColors[genre] : '#2d3748'}; color: {selected.includes(genre) ? genreColors[genre] : '#64748b'}"
-                >
-                  {genre}
-                </button>
-              {/if}
-            {/each}
-          </div>
-        {/if}
+        <div class="toggles" style="padding-top: 40px;">
+    {#each genreNames as genre}
+      {#if genre !== 'unknown'}
+        <button
+          onclick={() => toggleGenre(genre)}
+          disabled={!isExploreStep}
+          style="
+            border-color: {selected.includes(genre) ? genreColors[genre] : '#2d3748'}; 
+            color: {selected.includes(genre) ? genreColors[genre] : '#64748b'};
+            opacity: {isExploreStep ? 1 : 0.3};
+            cursor: {isExploreStep ? 'pointer' : 'default'};
+            transition: opacity 0.3s ease;
+          "
+        >
+          {genre}
+        </button>
+      {/if}
+    {/each}
+  </div>
 
         <div class="chart-wrap" bind:this={chartWrap}>
           <svg width={width + margin.left + margin.right} height={height + margin.top + margin.bottom}>
             <g transform="translate({margin.left}, {margin.top})">
+            <text x={-25} y={-15} text-anchor="middle" fill="var(--text-secondary)" font-size="16px" font-weight="500">Rating</text>
 
               {#each yTicks as tick}
-                <line x1={0} x2={width} y1={yScale(tick)} y2={yScale(tick)} stroke="#1e2530" stroke-dasharray="3,3" />
-                <text x={-10} y={yScale(tick)} text-anchor="end" dominant-baseline="middle" fill="#64748b" font-size="13px">{tick}</text>
+                <line x1={0} x2={width} y1={yScale(tick)} y2={yScale(tick)} stroke="rgba(255, 255, 255, 0.2)" stroke-dasharray="4,4" />
+                <text x={-15} y={yScale(tick)} text-anchor="end" dominant-baseline="middle" fill="var(--text-secondary)" font-size="16px">{tick}</text>
               {/each}
 
               {#each ageBuckets as bucket}
-                <text x={xScale(bucket.label)} y={height + 20} text-anchor="middle" fill="#64748b" font-size="13px">{bucket.label}</text>
+                <text x={xScale(bucket.label)} y={height + 30} text-anchor="middle" fill="var(--text-secondary)" font-size="16px">{bucket.label}</text>
+                
+                <rect 
+                  x={xScale(bucket.label) - (width / ageBuckets.length) / 2} 
+                  y={0} 
+                  width={width / ageBuckets.length} 
+                  height={height} 
+                  fill="transparent" 
+                  style="cursor: crosshair;"
+                  onmousemove={(e) => handleMouseMove(e, bucket.label)} 
+                  onmouseleave={handleMouseLeave} 
+                />
               {/each}
+
+              <text x={width / 2} y={height + 65} text-anchor="middle" fill="var(--text-secondary)" font-size="16px" font-weight="500">Age Group</text>
 
               <line x1={0} x2={width} y1={height} y2={height} stroke="#2d3748" />
               <line x1={0} x2={0} y1={0} y2={height} stroke="#2d3748" />
 
 				{#each selected as genre (genre + activeIndex)}
-				<path d={getLinePath(genre)} fill="none" stroke={genreColors[genre]} stroke-width="2.5" use:animateLine />
-                {#each getDots(genre) as dot}
-                  <circle cx={dot.cx} cy={dot.cy} r={dot.r} fill={genreColors[genre]} stroke="#0d1117" stroke-width="1.5" />
-                {/each}
-              {/each}
+        {@const dots = getDots(genre)}
+        {@const lastDot = dots[dots.length - 1]}
 
-              {#each ageBuckets as bucket}
-                <rect
-                  x={xScale(bucket.label) - 30} y={0} width={60} height={height}
-                  fill="transparent"
-                  onmousemove={(e) => handleMouseMove(e, bucket.label)}
-                  onmouseleave={handleMouseLeave}
-                />
-              {/each}
+        <path d={getLinePath(genre)} fill="none" stroke={genreColors[genre]} stroke-width="3" use:animateLine />
+        
+        {#each dots as dot}
+          <circle cx={dot.cx} cy={dot.cy} r={dot.r} fill={genreColors[genre]} stroke="var(--bg-dark)" stroke-width="1.5" />
+        {/each}
+
+        {#if lastDot}
+          <text
+            x={lastDot.cx + 12}
+            y={lastDot.cy}
+            fill={genreColors[genre]}
+            font-size="16px"
+            font-weight="600"
+            dominant-baseline="middle"
+            in:fade={{ duration: 400, delay: 800 }}
+          >
+            {genre}
+          </text>
+        {/if}
+      {/each}
 
             </g>
           </svg>
@@ -289,57 +333,86 @@ function animateLine(path) {
             </div>
           {/if}
         </div>
+        </div>
       {/if}
     </div>
   </svelte:fragment>
 </Scroll>
 
 <style>
-  .scroll-card {
-    min-height: 55vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-bottom: 1px solid #1e2530;
-    opacity: 0.3;
-    transition: opacity 0.3s ease;
+.scroll-track { width: 100%; }
+  .spacer { height: 120vh; }
+  
+
+  .sticky-text-wrap {
+    position: sticky;
+    top: 30vh;
+    width: 100%;
+    height: 0;
+    z-index: 10;
+    overflow: visible;
   }
 
-  .scroll-card.active { opacity: 1; }
+  .card-container {
+    position: relative;
+    width: 100%;
+  }
+
+  .scroll-card {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 32px;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
 
   .step-num {
-    font-size: 12px;
-    color: #4a5568;
-    font-weight: 500;
-    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
   }
 
   h3 {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 500;
-    color: #e2e8f0;
-    margin: 0 0 10px;
+    color: var(--text-primary);
+    margin: 0 0 12px;
   }
 
   p {
-    font-size: 15px;
-    color: #64748b;
-    line-height: 1.7;
-    max-width: 420px;
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.6;
     margin: 0;
   }
 
   .viz-wrapper {
     width: 100%;
     height: 100%;
+    padding-top: 80px;
+  }
+  button {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
   }
 
-  .instructions {
-    font-size: 14px;
-    color: #4a5568;
-    margin-bottom: 14px;
-    line-height: 1.6;
-    max-width: 700px;
+  .chart-wrap {
+    position: relative;
+    margin-top: 60px;
   }
 
   .toggles {
@@ -372,14 +445,5 @@ function animateLine(path) {
     pointer-events: none;
     font-size: 13px;
     color: #e2e8f0;
-  }
-
-  .findings { margin-top: 20px; }
-
-  .findings p {
-    font-size: 14px;
-    color: #64748b;
-    line-height: 1.6;
-    max-width: none;
   }
 </style>
