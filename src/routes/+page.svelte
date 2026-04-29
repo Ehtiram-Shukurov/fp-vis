@@ -103,10 +103,24 @@
   </div>
 </div>
 
-<!-- section 02 — age × genre -->
-<div class="scene" data-i="1" class:scene-visible={sceneVisible[1]}>
+<!-- section 05 — cords -->
+<div class="scene static-scene" data-i="1" class:scene-visible={sceneVisible[1]}>
   <div class="pinned-header">
-    <div class="section-tag">02 · Age × Genre</div>
+    <div class="section-tag">02 · Cords exploration</div>
+    <h2>Every user at a glance.</h2>
+    <p>Every user is represented by a semi-transparent cord, the more opaque a cord is, the more users there are that match
+      that trait. Click on the nodes to highlight all the users that pass through that node.
+    </p>
+  </div>
+  <div class="scene-body">
+      <CordChart />
+  </div>
+</div>
+
+<!-- section 02 — age × genre -->
+<div class="scene" data-i="2" class:scene-visible={sceneVisible[2]}>
+  <div class="pinned-header">
+    <div class="section-tag">03 · Age × Genre</div>
     <h2>Does age change what you enjoy?</h2>
     <p>Genre preferences shift noticeably across age groups. Some genres climb steadily with age, others drop off sharply.</p>
   </div>
@@ -117,9 +131,9 @@
 
 
 <!-- section 03 — scatter -->
-<div class="scene" data-i="2" class:scene-visible={sceneVisible[2]}>
+<div class="scene" data-i="3" class:scene-visible={sceneVisible[3]}>
   <div class="pinned-header">
-    <div class="section-tag">03 · How you compare</div>
+    <div class="section-tag">04 · How you compare</div>
     <h2>How do you compare?</h2>
   </div>
   <div class="scene-body">
@@ -128,9 +142,9 @@
 </div>
 
 <!-- section 04 — glyph -->
-<div class="scene static-scene" data-i="3" class:scene-visible={sceneVisible[3]}>
+<div class="scene static-scene" data-i="4" class:scene-visible={sceneVisible[4]}>
   <div class="pinned-header">
-    <div class="section-tag">04 · Glyph exploration</div>
+    <div class="section-tag">05 · Glyph exploration</div>
     <h2>Every demographic at a glance.</h2>
     <p>Each glyph represents an age × occupation group. The spokes show genre preferences, longer means higher average rating for that genre.</p>
   </div>
@@ -139,17 +153,7 @@
   </div>
 </div>
 
-<!-- section 05 — cords -->
-<div class="scene static-scene" data-i="4" class:scene-visible={sceneVisible[4]}>
-  <div class="pinned-header">
-    <div class="section-tag">05 · Cords exploration</div>
-    <h2>Demographic connections</h2>
-    <p>todo</p>
-  </div>
-  <div class="scene-body">
-      <CordChart />
-  </div>
-</div>
+
 
 <footer>
   <p>Dimension · CSCI 5609 · Spring 2025 · <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 100K dataset</a></p>

@@ -50,10 +50,10 @@
 	let width = $derived(
 		Math.max(
 			400,
-			visibleOccupations.length * 80 + margin.left + margin.right,
+			visibleOccupations.length * 55 + margin.left + margin.right,
 		),
 	);
-	let height = $state(450);
+	let height = $state(550);
 
 	let tooltipVisible = $state(false);
 	let tooltipX = $state(0);
@@ -232,6 +232,30 @@
 		class="chart-container"
 		style="display: flex; gap: 24px; align-items: flex-start; max-width: 100%;"
 	>
+<div class="glass-panel" style=" box-sizing: border-box;">
+<div
+		class="occupation-key"
+		style="margin-top: 24px; padding: 16px; border: 1px solid #1e2530; border-radius: 8px; background: transparent;"
+	>
+		<h3
+			style="color: #e2e8f0; margin-top: 0; margin-bottom: 16px; font-size: 16px; font-weight: 600;"
+		>
+			Filter Occupations
+		</h3>
+		<div style="display: flex; flex-wrap: wrap; gap: 8px;">
+			{#each allOccupations as occ}
+				<button
+					class="occ-btn"
+					class:active={activeOccupations[occ] !== false}
+					onclick={() =>
+						(activeOccupations[occ] =
+							activeOccupations[occ] === false ? true : false)}
+				>
+					{occ}
+				</button>
+			{/each}
+		</div>
+	</div>
 		<div class="scroll-wrap" style="flex: 1; min-width: 0; margin: 0;">
 			<svg {width} {height}>
 				<g>
@@ -340,10 +364,11 @@
 				</g>
 			</svg>
 		</div>
+</div>
 
 		<div
 			class="legend-wrap"
-			style="flex: 0 0 350px; padding: 24px 10px; border: 1px solid #1e2530; border-radius: 8px; background: transparent; text-align: center; position: sticky; top: 20px;"
+			style="flex: 0 0 350px; padding: 24px 10px; border: 1px solid #1e2530; border-radius: 8px; background: transparent; text-align: center; position: sticky; top: 20px;margin-top: 120px;"
 		>
 			<h3
 				style="color: #e2e8f0; margin-top: 0; margin-bottom: 24px; font-size: 16px; font-weight: 600;"
@@ -399,30 +424,7 @@
 			</svg>
 		</div>
 	</div>
-
-	<div
-		class="occupation-key"
-		style="margin-top: 24px; padding: 16px; border: 1px solid #1e2530; border-radius: 8px; background: transparent;"
-	>
-		<h3
-			style="color: #e2e8f0; margin-top: 0; margin-bottom: 16px; font-size: 16px; font-weight: 600;"
-		>
-			Filter Occupations
-		</h3>
-		<div style="display: flex; flex-wrap: wrap; gap: 8px;">
-			{#each allOccupations as occ}
-				<button
-					class="occ-btn"
-					class:active={activeOccupations[occ] !== false}
-					onclick={() =>
-						(activeOccupations[occ] =
-							activeOccupations[occ] === false ? true : false)}
-				>
-					{occ}
-				</button>
-			{/each}
-		</div>
-	</div>
+	
 
 	{#if tooltipVisible && tooltipData}
 		<div class="tooltip" style="left: {tooltipX}px; top: {tooltipY}px">

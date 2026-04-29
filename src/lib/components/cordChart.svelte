@@ -32,20 +32,17 @@
 	]
 
 	const ageBuckets = [
-		{ label: '<18',   min: 0,  max: 17  },
-		{ label: '18-24', min: 18, max: 24  },
-		{ label: '25-34', min: 25, max: 34  },
-		{ label: '35-44', min: 35, max: 44  },
-		{ label: '45-54', min: 45, max: 54  },
-		{ label: '55-64', min: 55, max: 64  },
-		{ label: '65+',   min: 65, max: 999 },
-	];
+    { label: '<18',   min: 0,  max: 17  },
+    { label: '18-24', min: 18, max: 24  },
+    { label: '25-34', min: 25, max: 34  },
+    { label: '35-44', min: 35, max: 44  },
+    { label: '45+', min: 45, max: 999  },
+  ]
 
 	const allAgeLabels = ageBuckets.map(b => b.label);
-
-  	const margin = { top: 40, right: 30, bottom: 80, left: 80 };
-	let width = $state(2000);
-	let height = $state(1200);
+	const margin = { top: 40, right: 60, bottom: 90, left: 60 };
+  	let width = $state(1100); 
+  	let height = $state(560);
 
 	function coordKey(x, y)
 	{
@@ -121,20 +118,35 @@
 	});
 
 	let xScaleDemographic = $derived(
-		d3.scalePoint().domain(demographics).range([width - margin.right, margin.left]).padding(1)
+		d3.scalePoint().domain(demographics).range([width - margin.right, margin.left]).padding(0.1)
 	);
+	
 	let yScaleGender = $derived(
-		d3.scalePoint().domain(genders).range([height, 0]).padding(1)
+		d3.scalePoint().domain(genders).range([height - margin.bottom, margin.top]).padding(0.2)
 	);
 	let yScaleAge = $derived(
-		d3.scalePoint().domain(allAgeLabels).range([height, 0]).padding(1)
-	);
-	let yScaleOccupation = $derived(
-		d3.scalePoint().domain(allOccupations).range([height, 0]).padding(1)
+		d3.scalePoint().domain(allAgeLabels).range([height - margin.bottom, margin.top]).padding(0.2)
 	);
 	let yScaleRatings = $derived(
-		d3.scalePoint().domain(ratings).range([height, 0]).padding(1)
+		d3.scalePoint().domain(ratings).range([height - margin.bottom, margin.top]).padding(0.2)
 	);
+	let selectedOccupations = $state(['student', 'educator', 'engineer', 'programmer', 'healthcare', 'artist']);
+
+	let filteredUserMap = $derived(userMap.filter(u => selectedOccupations.includes(u.occupation)));
+
+	let yScaleOccupation = $derived(
+		d3.scalePoint().domain(selectedOccupations).range([height - margin.bottom, margin.top]).padding(0)
+	);
+
+	function toggleOccupation(occ) {
+		if (selectedOccupations.includes(occ)) {
+			if (selectedOccupations.length > 1) {
+				selectedOccupations = selectedOccupations.filter(o => o !== occ);
+			}
+		} else {
+			selectedOccupations = [...selectedOccupations, occ];
+		}
+	}
 </script>
 
 {#if loading}
@@ -142,10 +154,15 @@
 {:else if error}
 	<p style="color: red; text-align: center;">{error}</p>
 {:else}
-	<div class="scroll-wrap">
-		<svg {width} {height}>
-			<g>
-				{#each userMap as user}
+<div class="cord-layout">
+	<div class="glass-panel" style="padding: 20px; width: 100%; max-width: 1400px; margin: 0 auto; box-sizing: border-box;">
+	
+    
+    <div class="scroll-wrap" style="overflow-x: auto; overflow-y: visible;">
+      
+      <svg viewBox="0 0 {width} {height}" style="width: 100%; height: auto; min-width: 1000px; display: block;">
+        <g>
+				{#each filteredUserMap as user}
 					<path
 						d={"M " + xScaleDemographic('gender') + " " + (yScaleGender(user.gender))
 						+ " L " + xScaleDemographic('age') + " " + (yScaleAge(user.age))
@@ -174,7 +191,7 @@
 						cx={xScaleDemographic('gender')}
 						cy={yScaleGender(yLabel)}
 						r="18"
-						on:click={() => circleClick(xScaleDemographic('gender'), yScaleGender(yLabel))}
+						onclick={() => circleClick(xScaleDemographic('gender'), yScaleGender(yLabel))}
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('gender'), yScaleGender(yLabel))) ? '#c6cf5d' : '#0f6e56'}
 						stroke="black"
 						stroke-width="2"
@@ -183,7 +200,7 @@
 					<text
 						x={xScaleDemographic('gender')}
 						y={yScaleGender(yLabel)}
-						on:click={() => circleClick(xScaleDemographic('gender'), yScaleGender(yLabel))}
+						onclick={() => circleClick(xScaleDemographic('gender'), yScaleGender(yLabel))}
 						text-anchor="middle"
 						dominant-baseline="middle"
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('gender'), yScaleGender(yLabel))) ? "#000000": "#e2e8f0"}
@@ -196,7 +213,7 @@
 						cx={xScaleDemographic('age')}
 						cy={yScaleAge(yLabel)}
 						r="18"
-						on:click={() => circleClick(xScaleDemographic('age'), yScaleAge(yLabel))}
+						onclick={() => circleClick(xScaleDemographic('age'), yScaleAge(yLabel))}
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('age'), yScaleAge(yLabel))) ? '#c6cf5d' : '#0f6e56'}
 						stroke="black"
 						stroke-width="2"
@@ -205,7 +222,7 @@
 					<text
 						x={xScaleDemographic('age')}
 						y={yScaleAge(yLabel)}
-						on:click={() => circleClick(xScaleDemographic('age'), yScaleAge(yLabel))}
+						onclick={() => circleClick(xScaleDemographic('age'), yScaleAge(yLabel))}
 						text-anchor="middle"
 						dominant-baseline="middle"
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('age'), yScaleAge(yLabel))) ? "#000000": "#e2e8f0"}
@@ -213,12 +230,12 @@
 						{yLabel}
 					</text>
 				{/each}
-				{#each allOccupations as yLabel}
+				{#each selectedOccupations as yLabel}
 					<circle
 						cx={xScaleDemographic('occupation')}
 						cy={yScaleOccupation(yLabel)}
-						r="18"
-						on:click={() => circleClick(xScaleDemographic('occupation'), yScaleOccupation(yLabel))}
+						r="14"
+						onclick={() => circleClick(xScaleDemographic('occupation'), yScaleOccupation(yLabel))}
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('occupation'), yScaleOccupation(yLabel))) ? '#c6cf5d' : '#0f6e56'}
 						stroke="black"
 						stroke-width="2"
@@ -227,7 +244,7 @@
 					<text
 						x={xScaleDemographic('occupation')}
 						y={yScaleOccupation(yLabel)}
-						on:click={() => circleClick(xScaleDemographic('occupation'), yScaleOccupation(yLabel))}
+						onclick={() => circleClick(xScaleDemographic('occupation'), yScaleOccupation(yLabel))}
 						text-anchor="middle"
 						dominant-baseline="middle"
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('occupation'), yScaleOccupation(yLabel))) ? "#000000": "#e2e8f0"}
@@ -240,7 +257,7 @@
 						cx={xScaleDemographic('rounded average rating')}
 						cy={yScaleRatings(yLabel)}
 						r="18"
-						on:click={() => circleClick(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))}
+						onclick={() => circleClick(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))}
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))) ? '#c6cf5d' : '#0f6e56'}
 						stroke="black"
 						stroke-width="2"
@@ -249,7 +266,7 @@
 					<text
 						x={xScaleDemographic('rounded average rating')}
 						y={yScaleRatings(yLabel)}
-						on:click={() => circleClick(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))}
+						onclick={() => circleClick(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))}
 						text-anchor="middle"
 						dominant-baseline="middle"
 						fill={clickedCoordinates.has(coordKey(xScaleDemographic('rounded average rating'), yScaleRatings(yLabel))) ? "#000000": "#e2e8f0"}
@@ -260,6 +277,22 @@
 			</g>
 		</svg>
 	</div>
+	</div>
+	<div class="filter-section">
+			<span class="filter-label">Occupations:</span>
+			<div class="pill-container">
+				{#each allOccupations as occ}
+					<button 
+						class="simple-pill {selectedOccupations.includes(occ) ? 'active' : ''}"
+						onclick={() => toggleOccupation(occ)}
+					>
+						{occ}
+					</button>
+				{/each}
+			</div>
+		</div>
+
+	</div>
 {/if}
 
 <style>
@@ -267,9 +300,6 @@
 		width: 100%;
 		max-width: 100%;
 		overflow-x: auto;
-		border: 1px solid #1e2530;
-		border-radius: 8px;
-		background: transparent;
 		padding: 10px 0;
 		box-sizing: border-box;
 	}
@@ -277,5 +307,78 @@
 	.scroll-wrap::-webkit-scrollbar { height: 8px; }
 	.scroll-wrap::-webkit-scrollbar-track { background: #0d1117; border-radius: 4px; }
 	.scroll-wrap::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 4px; }
+	.cord-layout {
+		display: flex;
+		align-items: flex-start;
+		gap: 24px;
+		max-width: 1400px;
+		margin: 0 auto 40px auto;
+	}
+
+	.filter-section {
+		position: sticky;
+		top: 220px; 
+		z-index: 50; 
+		width: 200px;
+		flex-shrink: 0;
+	}
+
+	.filter-label {
+		font-size: 13px;
+		font-weight: 600;
+		color: #64748b;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-bottom: 12px; 
+		display: block;
+		padding-left: 4px;
+	}
+
+	.pill-container {
+		display: flex;
+		flex-direction: column; 
+		gap: 6px; 
+		max-height: 55vh;
+		overflow-y: auto;
+		padding-right: 8px;
+	}
+
+	.pill-container::-webkit-scrollbar { 
+		width: 4px; 
+	}
+	.pill-container::-webkit-scrollbar-track { 
+		background: transparent; 
+	}
+	.pill-container::-webkit-scrollbar-thumb { 
+		background: rgba(255, 255, 255, 0.1); 
+		border-radius: 4px; 
+	}
+	.pill-container::-webkit-scrollbar-thumb:hover { 
+		background: rgba(255, 255, 255, 0.2); 
+	}
+
+	.simple-pill {
+		width: 100%;
+		text-align: left;
+		background: #1e2530;
+		border: 1px solid #2d3748;
+		border-radius: 20px;
+		padding: 6px 12px;
+		font-size: 13px;
+		color: #94a3b8;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.simple-pill:hover {
+		background: #2d3748;
+		color: #e2e8f0;
+	}
+
+	.simple-pill.active {
+		background: #3b82f6;
+		border-color: #2d3748;
+		color: white;
+	}
 
 </style>
