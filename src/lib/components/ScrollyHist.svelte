@@ -7,12 +7,12 @@
   let progress = $state(0);
   let showComparison = $state(false);
 
-  const thresholds = [0, 12, 25, 35, 45, 55, 65, 75, 85, 95]
+  const thresholds = [0, 11, 25, 40, 50, 65, 75, 85, 95];
   let activeIndex = $derived(
     thresholds.findLastIndex(t => progress >= t)
   )
 
-  let isExploreStep = $derived(activeIndex === 9);
+  let isExploreStep = $derived(activeIndex === 8);
 
   const sections = [
     {
@@ -44,16 +44,6 @@
       selectedAge: "All",
       selectedGender: "All",
       selectedOccupation: "none",
-    },
-    {
-      label: "Homemakers",
-      description: "Homemakers disliked the children's genre much more than the other occupations. While we cannot be certain of the reasoning for this, one plausible idea is that homemakers who care for children are probably a bit sick of watching the same childrens movie over and over.",
-      filterType: "genre",
-      selectedGenre: "Children's",
-      selectedMovieId: "",
-      selectedAge: "All",
-      selectedGender: "All",
-      selectedOccupation: "homemaker",
     },
     {
       label: "The documentary genre speaks to different people",
