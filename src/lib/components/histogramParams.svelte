@@ -139,25 +139,21 @@
 			{#if filteredRatings.length === 0}
 				<p>No ratings found for these filters.</p>
 			{:else}
-				{#key filteredRatings}
-					<div class="histogram">
-						{#each ratingCounts as item}
-							<div class="bar-wrapper">
-								<span class="bar-count">{item.count}</span>
-								<div
-									class="bar"
-									style="
-										height: {(item.count / maxCount) * 250}px;
-										--bar-height: {(item.count / maxCount) * 250}px;
-										background-color: {item.star <= 2 ? '#e74c3c' : item.star === 3 ? '#f39c12' : '#2ecc71'};
-										animation-delay: {(item.star - 1) * 150}ms
-									"
-								></div>
-								<span class="bar-label">{item.star} star</span>
-							</div>
-						{/each}
-					</div>
-				{/key}
+				<div class="histogram">
+					{#each ratingCounts as item}
+						<div class="bar-wrapper">
+							<span class="bar-count">{item.count}</span>
+							<div
+								class="bar"
+								style="
+									height: {(item.count / maxCount) * 250}px;
+									background-color: {item.star <= 2 ? '#e74c3c' : item.star === 3 ? '#f39c12' : '#2ecc71'};
+								"
+							></div>
+							<span class="bar-label">{item.star} star</span>
+						</div>
+					{/each}
+				</div>
 			{/if}
 		</div>
 	{/if}
@@ -221,7 +217,7 @@
 		width: 100%;
 		min-height: 2px;
 		border-radius: 3px 3px 0 0;
-		animation: grow 0.8s ease-out forwards;
+		transition: height 0.6s ease, background-color 0.4s ease;
 	}
 
 	.bar-count {
@@ -236,8 +232,5 @@
 		color: #64748b;
 	}
 
-	@keyframes grow {
-		from { height: 0; }
-		to   { height: var(--bar-height); }
-	}
+
 </style>
