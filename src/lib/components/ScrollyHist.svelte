@@ -33,7 +33,7 @@
       selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "All",
-      selectedOccupation: "Healthcare",
+      selectedOccupation: "healthcare",
     },
     {
       label: "Unemployed people",
