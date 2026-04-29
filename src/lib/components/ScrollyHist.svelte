@@ -7,12 +7,12 @@
   let progress = $state(0);
   let showComparison = $state(false);
 
-const thresholds = [0, 10, 20, 30, 40, 45, 55, 65, 75, 85, 90, 95]
+  const thresholds = [0, 12, 25, 35, 45, 55, 65, 75, 85, 95]
   let activeIndex = $derived(
-    Math.max(0, thresholds.findLastIndex(t => progress >= t))
-  );
+    thresholds.findLastIndex(t => progress >= t)
+  )
 
-  let isExploreStep = $derived(activeIndex === 11);
+  let isExploreStep = $derived(activeIndex === 9);
 
   const sections = [
     {
@@ -86,44 +86,26 @@ const thresholds = [0, 10, 20, 30, 40, 45, 55, 65, 75, 85, 90, 95]
       selectedOccupation: "executive",
     },
     {
-      label: "Gender Also Has an Effect",
-      description: "This first graph shows Horror ratings for the male audience.",
+      label: "Gender Effects in Horror",
+      description: "Comparing male and female audiences under 25, the female distribution shows a significant skew towards lower ratings. Despite having less than half the total ratings of the male group, the female group has nearly as many 1-star reviews.",
       filterType: "genre",
       selectedGenre: "Horror",
-      selectedMovieId: "",
       selectedAge: "Under 25",
       selectedGender: "M",
       selectedOccupation: "All",
+      compare: true,
+      secondParams: { gender: "F" }
     },
     {
-      label: "Switch to Female Distribution",
-      description: "The switch in this distribution shows a lot more skew towards lower ratings. There are even almost as many 1 ratings as the male distribution with less than half the total number of ratings! It's possible the general culture of growing up as a woman may influence perception of horror movies.",
-      filterType: "genre",
-      selectedGenre: "Horror",
-      selectedMovieId: "",
-      selectedAge: "Under 25",
-      selectedGender: "F",
-      selectedOccupation: "All",
-    },
-    {
-      label: "Male Documentary Ratings",
-      description: "The male distribution of documentary ratings is pretty standard.",
+      label: "Gender Effects in Documentaries",
+      description: "While the male distribution is fairly standard, the female distribution is more proportionally skewed toward extremes (1s and 5s), suggesting a more 'love-it-or-hate-it' relationship with the genre.",
       filterType: "genre",
       selectedGenre: "Documentary",
-      selectedMovieId: "",
       selectedAge: "All",
       selectedGender: "M",
       selectedOccupation: "All",
-    },
-    {
-      label: "Versus Female Documentary Ratings",
-      description: "This distribution is a lot more proportionally skewed towards the extreme ratings of 1s or 5s. Generally, experience growing up as a woman may increase the chances of a love-or-hate relationship with documentary related topics.",
-      filterType: "genre",
-      selectedGenre: "Documentary",
-      selectedMovieId: "",
-      selectedAge: "All",
-      selectedGender: "F",
-      selectedOccupation: "All",
+      compare: true,
+      secondParams: { gender: "F" }
     },
     {
       label: "Now explore it yourself.",
@@ -165,21 +147,9 @@ const thresholds = [0, 10, 20, 30, 40, 45, 55, 65, 75, 85, 90, 95]
 
   <svelte:fragment slot="viz">
     <div class="viz-wrapper">
-      {#if !isExploreStep}
-        <RatingsChart
-          filterType={sections[activeIndex].filterType}
-          selectedGenre={sections[activeIndex].selectedGenre}
-          selectedMovieId={sections[activeIndex].selectedMovieId}
-          selectedAge={sections[activeIndex].selectedAge}
-          selectedGender={sections[activeIndex].selectedGender}
-          selectedOccupation={sections[activeIndex].selectedOccupation}
-        />
-      {:else}
+      {#if isExploreStep}
         <div class="explore-wrap" in:fly={{ y: 20, duration: 500 }}>
-          <button
-            onclick={() => showComparison = !showComparison}
-            class="compare-btn"
-          >
+          <button onclick={() => (showComparison = !showComparison)} class="compare-btn">
             {showComparison ? 'Remove comparison' : '+ Add comparison'}
           </button>
           <div class="side-by-side">
@@ -191,6 +161,29 @@ const thresholds = [0, 10, 20, 30, 40, 45, 55, 65, 75, 85, 90, 95]
             {/if}
           </div>
         </div>
+      {:else if sections[activeIndex].compare}
+        <div class="side-by-side" in:fly={{ y: 10, duration: 400 }}>
+          <div class="chart-col">
+            <RatingsChart
+              {...sections[activeIndex]}
+            />
+          </div>
+          <div class="chart-col">
+            <RatingsChart
+              {...sections[activeIndex]}
+              selectedGender={sections[activeIndex].secondParams.gender}
+            />
+          </div>
+        </div>
+      {:else}
+        <RatingsChart
+          filterType={sections[activeIndex].filterType}
+          selectedGenre={sections[activeIndex].selectedGenre}
+          selectedMovieId={sections[activeIndex].selectedMovieId}
+          selectedAge={sections[activeIndex].selectedAge}
+          selectedGender={sections[activeIndex].selectedGender}
+          selectedOccupation={sections[activeIndex].selectedOccupation}
+        />
       {/if}
     </div>
   </svelte:fragment>
