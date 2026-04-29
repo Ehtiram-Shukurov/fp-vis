@@ -7,12 +7,13 @@
 
 	let loading = $state(true);
 	let error = $state("");
-	let userMap = {};
+	let userRatings = {};
+	let userMap = $state([]);
 	let allOccupations = $state([]);
 	let allRatings = $state([]);
 	
 	const demographics = [
-		'rating', 'occupation', 'age', 'gender'
+		'rounded average rating', 'occupation', 'age', 'gender'
 	];
 
 	const genreNames = [
@@ -54,30 +55,40 @@
 				fetch(`${base}u.user`).then(r => r.text()),
 			]);
 
-			let occSet = new Set();
-			usersText.trim().split("\n").forEach(line => {
-				const parts = line.split("|");
-				const id = parseInt(parts[0]);
-				const gender = parts[2];
-				const age = parseInt(parts[1]);
-				const occupation = parts[3];
-				const bucket = ageBuckets.find(b => age >= b.min && age <= b.max);
-				occSet.add(occupation);
-				userMap[id] = {gender: gender === 'M' ? 'Male' : "Female", occupation, ageLabel: bucket?.label ?? "Unknown" };
-			});
-
-			const occupationsArray = Array.from(occSet).sort();
-			allOccupations = occupationsArray
-
 			const ratingsRes = await fetch(`${base}u.data`)
 			allRatings = ratingsText.trim().split('\n').map(line => {
 				const parts = line.split('\t')
+				if (userRatings[parseInt(parts[0])] === undefined)
+				{
+					userRatings[parseInt(parts[0])] = [parseInt(parts[2]), 1]
+				}
+				else
+				{
+					userRatings[parseInt(parts[0])][0] += parseInt(parts[2]);
+					userRatings[parseInt(parts[0])][1] += 1;
+				}
 				return {
 					userId: parseInt(parts[0]),
 					movieId: parseInt(parts[1]),
 					rating: parseInt(parts[2])
 				}
 			})
+
+			let occSet = new Set();
+			userMap = usersText.trim().split("\n").map(line => {
+				const parts = line.split("|");
+				occSet.add(parts[3]);
+				return {
+					gender: parts[2] === 'M' ? 'Male' : "Female",
+					occupation: parts[3],
+					age: ageBuckets.find(b => parseInt(parts[1]) >= b.min && parseInt(parts[1]) <= b.max)?.label ?? "Unknown" ,
+					avgRating: Math.round(userRatings[parseInt(parts[0])][0] / userRatings[parseInt(parts[0])][1]),
+					id: parseInt(parts[0])
+				}
+			});
+
+			const occupationsArray = Array.from(occSet).sort();
+			allOccupations = occupationsArray
 
 			loading = false;
 
@@ -113,27 +124,29 @@
 	<div class="scroll-wrap">
 		<svg {width} {height}>
 			<g>
-				{#each allRatings as r}
-					{#if userMap[r.userId].gender === 'Male'}
+				{#each userMap as user}
+					{#if user.gender === 'Male'}
+
+
 						<path
-							d={"M " + xScaleDemographic('gender') + " " + (yScaleGender(userMap[r.userId].gender))
-							+ " L " + xScaleDemographic('age') + " " + (yScaleAge(userMap[r.userId].ageLabel))
-							+ " L " + xScaleDemographic('occupation') + " " + (yScaleOccupation(userMap[r.userId].occupation))
-							+ " L " + xScaleDemographic('rating') + " " + (yScaleRatings(String(r.rating)))}
+							d={"M " + xScaleDemographic('gender') + " " + (yScaleGender(user.gender))
+							+ " L " + xScaleDemographic('age') + " " + (yScaleAge(user.age))
+							+ " L " + xScaleDemographic('occupation') + " " + (yScaleOccupation(user.occupation))
+							+ " L " + xScaleDemographic('rounded average rating') + " " + (yScaleRatings(String(user.avgRating)))}
 							stroke="#00aaff"
 							stroke-width="2"
-							stroke-opacity="0.02"
+							stroke-opacity="0.05"
 							fill="none"
 						/>
 					{:else}
 						<path
-							d={"M " + xScaleDemographic('gender') + " " + (yScaleGender(userMap[r.userId].gender))
-							+ " L " + xScaleDemographic('age') + " " + (yScaleAge(userMap[r.userId].ageLabel))
-							+ " L " + xScaleDemographic('occupation') + " " + (yScaleOccupation(userMap[r.userId].occupation))
-							+ " L " + xScaleDemographic('rating') + " " + (yScaleRatings(String(r.rating)))}
+							d={"M " + xScaleDemographic('gender') + " " + (yScaleGender(user.gender))
+							+ " L " + xScaleDemographic('age') + " " + (yScaleAge(user.age))
+							+ " L " + xScaleDemographic('occupation') + " " + (yScaleOccupation(user.occupation))
+							+ " L " + xScaleDemographic('rounded average rating') + " " + (yScaleRatings(String(user.avgRating)))}
 							stroke="#f700a9"
 							stroke-width="2"
-							stroke-opacity="0.02"
+							stroke-opacity="0.05"
 							fill="none"
 						/>
 					{/if}
@@ -143,16 +156,20 @@
 					<text x={xScaleDemographic(xLabel)} y={height - 10} text-anchor="middle" dominant-baseline="middle" fill="#94a3b8" font-size="20px">{xLabel}</text>
 				{/each}
 				{#each genders as yLabel}
-					<text x={xScaleDemographic('gender') - 1} y={yScaleGender(yLabel)} text-anchor="end" dominant-baseline="middle" fill="#94a3b8" font-size="13px">{yLabel}</text>
+					<circle cx={xScaleDemographic('gender')} cy={yScaleGender(yLabel)} r="18" fill="#0f6e56" stroke="black" stroke-width="2" opacity="1"/>
+					<text x={xScaleDemographic('gender')} y={yScaleGender(yLabel)} text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="10px">{yLabel}</text>
 				{/each}
 				{#each allAgeLabels as yLabel}
-					<text x={xScaleDemographic('age') - 1} y={yScaleAge(yLabel)} text-anchor="end" dominant-baseline="middle" fill="#94a3b8" font-size="13px">{yLabel}</text>
+					<circle cx={xScaleDemographic('age')} cy={yScaleAge(yLabel)} r="18" fill="#0f6e56" stroke="black" stroke-width="2" opacity="1"/>
+					<text x={xScaleDemographic('age')} y={yScaleAge(yLabel)} text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="10px">{yLabel}</text>
 				{/each}
 				{#each allOccupations as yLabel}
-					<text x={xScaleDemographic('occupation') - 1} y={yScaleOccupation(yLabel)} text-anchor="end" dominant-baseline="middle" fill="#94a3b8" font-size="13px">{yLabel}</text>
+					<circle cx={xScaleDemographic('occupation')} cy={yScaleOccupation(yLabel)} r="18" fill="#0f6e56" stroke="black" stroke-width="2" opacity="1"/>
+					<text x={xScaleDemographic('occupation')} y={yScaleOccupation(yLabel)} text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="10px">{yLabel}</text>
 				{/each}
 				{#each ratings as yLabel}
-					<text x={xScaleDemographic('rating') - 1} y={yScaleRatings(yLabel)} text-anchor="end" dominant-baseline="middle" fill="#94a3b8" font-size="13px">{yLabel}</text>
+					<circle cx={xScaleDemographic('rounded average rating')} cy={yScaleRatings(yLabel)} r="18" fill="#0f6e56" stroke="black" stroke-width="2" opacity="1"/>
+					<text x={xScaleDemographic('rounded average rating')} y={yScaleRatings(yLabel)} text-anchor="middle" dominant-baseline="middle" fill="#e2e8f0" font-size="13px">{yLabel}</text>
 				{/each}
 			</g>
 		</svg>
