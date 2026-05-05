@@ -154,9 +154,26 @@
 </div>
 
 
-
 <footer>
-  <p>Dimension · CSCI 5609 · Spring 2025 · <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 100K dataset</a></p>
+  <div class="footer-content">
+   <h2 class="footer-title">Acknowledgements</h2>
+    <div class="footer-team">
+      <p class="footer-label">Team</p>
+      <p>Dylan Lyon · Genevieve Gray · Ezra Shukurov · Jake O'Shaughnessy · Max Lalonde</p>
+    </div>
+
+    <div class="footer-refs">
+      <p class="footer-label">References</p>
+      <p>· 
+        <a href="https://grouplens.org/datasets/movielens/" target="_blank">MovieLens 100K Dataset</a>
+      </p>
+      <p>· Categorical Scatterplot concept via <a href="https://www.datylon.com/blog/types-of-charts-graphs-examples-data-visualization" target="_blank">Datylon</a></p>
+      <p>· Glyph inspiration from <a href="https://www.oecd.org/en/data/tools/well-being-data-monitor/better-life-index.html" target="_blank">OECD Better Life Index</a></p>
+      <p>· Counting animation via <a href="https://medium.com/@phornphatch/creating-a-counting-number-animation-from-0-to-with-pure-css-9a1004cf5c91" target="_blank">Medium</a></p>
+      <p>· D3.js line chart reference via <a href="https://d3-graph-gallery.com/line.html" target="_blank">D3 Graph Gallery</a></p>
+<p style="font-size: 20px; color: #4a5568; margin-top: 60px;">Built with SvelteKit and D3.js · CSCI 5609 · Spring 2026</p>
+    </div>
+  </div>
 </footer>
 
 <style>
@@ -353,18 +370,45 @@
     50% { transform: translateY(6px); }
   }
 
-  footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 32px 60px;
-    font-size: 14px;
-    color: #2d3748;
-    border-top: 1px solid #1e2530;
-    margin-top: 80px;
-  }
+footer {
+  padding: 60px 60px 80px 20px;
+  border-top: 1px solid #1e2530;
+  margin-top: 80px;
+}
 
-  footer a { color: #2d3748; }
+.footer-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-left: 0;
+  align-items: flex-start;
+}
+
+footer p {
+  font-size: 18px;
+  color: #e2e8f0;
+  margin: 0 0 12px;
+}
+
+.footer-label {
+  font-size: 13px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 12px;
+}
+
+footer a {
+  color: #e2e8f0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+footer a:hover {
+  color: #f8fafc;
+}
 
   .scene.static-scene {
     margin-bottom: 15vh;
