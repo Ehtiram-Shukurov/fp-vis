@@ -108,8 +108,9 @@
   <div class="pinned-header">
     <div class="section-tag">02 · Cords exploration</div>
     <h2>Every user at a glance.</h2>
-    <p>Every user is represented by a semi-transparent cord, the more opaque a cord is, the more users there are that match
-      that trait. Click on the nodes to highlight all the users that pass through that node.
+    <p>Every user is represented by a semi-transparent line that passes through multiple nodes representing different traits of that user.
+				A fully opaque line means there are numerous lines stacked upon each other. 
+				Click on a node to highlight all the users that have that trait.
     </p>
   </div>
   <div class="scene-body">
