@@ -158,10 +158,7 @@
 {:else}
 <div class="cord-layout">
 	<div class="glass-panel" style="padding: 20px; width: 100%; max-width: 1400px; margin: 0 auto; box-sizing: border-box;">
-	
-    
     <div class="scroll-wrap" style="overflow-x: auto; overflow-y: visible;">
-      
       <svg viewBox="0 0 {width} {height}" style="width: 100%; height: auto; min-width: 1000px; display: block;">
         <g>
 				{#each filteredUserMap as user}
