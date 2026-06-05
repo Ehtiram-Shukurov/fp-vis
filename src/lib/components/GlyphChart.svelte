@@ -82,14 +82,14 @@
 		const stats = glyphData[`${occ}|${ageLabel}`];
 		let totalSum = 0;
 		let totalCount = 0;
-		stats.forEach(s => {
+		stats.forEach((s) => {
 			if (s.avg > 0) {
 				totalSum += s.avg * s.count;
 				totalCount += s.count;
 			}
 		});
 		const overallAvg = totalCount > 0 ? totalSum / totalCount : 0;
-		
+
 		selectedGlyphData = {
 			occ,
 			ageLabel,
@@ -232,139 +232,151 @@
 		class="chart-container"
 		style="display: flex; gap: 24px; align-items: flex-start; max-width: 100%;"
 	>
-<div class="glass-panel" style=" box-sizing: border-box;">
-<div
-		class="occupation-key"
-		style="margin-top: 24px; padding: 16px; border: 1px solid #1e2530; border-radius: 8px; background: transparent;"
-	>
-		<h3
-			style="color: #e2e8f0; margin-top: 0; margin-bottom: 16px; font-size: 16px; font-weight: 600;"
-		>
-			Filter Occupations
-		</h3>
-		<div style="display: flex; flex-wrap: wrap; gap: 8px;">
-			{#each allOccupations as occ}
-				<button
-					class="occ-btn"
-					class:active={activeOccupations[occ] !== false}
-					onclick={() =>
-						(activeOccupations[occ] =
-							activeOccupations[occ] === false ? true : false)}
+		<div class="glass-panel" style=" box-sizing: border-box;">
+			<div
+				class="occupation-key"
+				style="margin-top: 24px; padding: 16px; border: 1px solid #1e2530; border-radius: 8px; background: transparent;"
+			>
+				<h3
+					style="color: #e2e8f0; margin-top: 0; margin-bottom: 16px; font-size: 16px; font-weight: 600;"
 				>
-					{occ}
-				</button>
-			{/each}
-		</div>
-	</div>
-		<div class="scroll-wrap" style="flex: 1; min-width: 0; margin: 0;">
-			<svg {width} {height}>
-				<g>
-					{#each allAgeLabels as yLabel}
-						<line
-							x1={margin.left}
-							x2={width - margin.right}
-							y1={yScale(yLabel)}
-							y2={yScale(yLabel)}
-							stroke="#1e2530"
-							stroke-width="1"
-							stroke-dasharray="2,2"
-						/>
-						<text
-							x={margin.left - 15}
-							y={yScale(yLabel)}
-							text-anchor="end"
-							dominant-baseline="middle"
-							fill="#94a3b8"
-							font-size="13px">{yLabel}</text
+					Filter Occupations
+				</h3>
+				<div style="display: flex; flex-wrap: wrap; gap: 8px;">
+					{#each allOccupations as occ}
+						<button
+							class="occ-btn"
+							class:active={activeOccupations[occ] !== false}
+							onclick={() =>
+								(activeOccupations[occ] =
+									activeOccupations[occ] === false
+										? true
+										: false)}
 						>
+							{occ}
+						</button>
 					{/each}
-
-					{#each visibleOccupations as xLabel}
-						<line
-							x1={xScale(xLabel)}
-							x2={xScale(xLabel)}
-							y1={margin.top}
-							y2={height - margin.bottom}
-							stroke="#1e2530"
-							stroke-width="1"
-							stroke-dasharray="2,2"
-						/>
-						<text
-							x={xScale(xLabel)}
-							y={height - margin.bottom + 20}
-							text-anchor="end"
-							transform={`rotate(-45, ${xScale(xLabel)}, ${height - margin.bottom + 20})`}
-							fill="#94a3b8"
-							font-size="13px">{xLabel}</text
-						>
-					{/each}
-
-					{#each visibleOccupations as occ}
-						{#each allAgeLabels as ageLabel}
-							{#if glyphData[`${occ}|${ageLabel}`]}
-								{@const isHovered =
-									hoveredKey === `${occ}|${ageLabel}`}
-								<g
-									transform="translate({xScale(occ)}, {yScale(
-										ageLabel,
-									)})"
-									role="button"
-									tabindex="0"
-									onmousemove={(e) =>
-										handleMouseMove(e, occ, ageLabel)}
-									onmouseleave={handleMouseLeave}
-									onclick={() =>
-										handleGlyphClick(occ, ageLabel)}
-									onkeydown={(e) =>
-										e.key === "Enter" &&
-										handleGlyphClick(occ, ageLabel)}
-									style="cursor: pointer;"
-								>
-									<circle r="25" fill="transparent" />
-									<circle
-										r={isHovered ? 3 : 2}
-										fill={isHovered ? "#e2e8f0" : "#2d3748"}
-										style="transition: r 0.2s ease;"
-									/>
-
-									{#each glyphData[`${occ}|${ageLabel}`] as genreStat}
-										{#if genreStat.avg > 0}
-											<line
-												x1="0"
-												y1="0"
-												x2={glyphsAnimated
-													? Math.cos(
-															genreStat.angle,
-														) *
-														rScale(genreStat.avg) *
-														(isHovered ? 1.5 : 1)
-													: 0}
-												y2={glyphsAnimated
-													? Math.sin(
-															genreStat.angle,
-														) *
-														rScale(genreStat.avg) *
-														(isHovered ? 1.5 : 1)
-													: 0}
-												stroke={genreColors[
-													genreStat.genre
-												]}
-												stroke-width={isHovered
-													? 3.5
-													: 2.5}
-												stroke-linecap="round"
-												style="transition: x2 0.6s ease-out, y2 0.6s ease-out, stroke-width 0.2s ease;"
-											/>
-										{/if}
-									{/each}
-								</g>
-							{/if}
+				</div>
+			</div>
+			<div class="scroll-wrap" style="flex: 1; min-width: 0; margin: 0;">
+				<svg {width} {height}>
+					<g>
+						{#each allAgeLabels as yLabel}
+							<line
+								x1={margin.left}
+								x2={width - margin.right}
+								y1={yScale(yLabel)}
+								y2={yScale(yLabel)}
+								stroke="#1e2530"
+								stroke-width="1"
+								stroke-dasharray="2,2"
+							/>
+							<text
+								x={margin.left - 15}
+								y={yScale(yLabel)}
+								text-anchor="end"
+								dominant-baseline="middle"
+								fill="#94a3b8"
+								font-size="13px">{yLabel}</text
+							>
 						{/each}
-					{/each}
-				</g>
-			</svg>
+
+						{#each visibleOccupations as xLabel}
+							<line
+								x1={xScale(xLabel)}
+								x2={xScale(xLabel)}
+								y1={margin.top}
+								y2={height - margin.bottom}
+								stroke="#1e2530"
+								stroke-width="1"
+								stroke-dasharray="2,2"
+							/>
+							<text
+								x={xScale(xLabel)}
+								y={height - margin.bottom + 20}
+								text-anchor="end"
+								transform={`rotate(-45, ${xScale(xLabel)}, ${height - margin.bottom + 20})`}
+								fill="#94a3b8"
+								font-size="13px">{xLabel}</text
+							>
+						{/each}
+
+						{#each visibleOccupations as occ}
+							{#each allAgeLabels as ageLabel}
+								{#if glyphData[`${occ}|${ageLabel}`]}
+									{@const isHovered =
+										hoveredKey === `${occ}|${ageLabel}`}
+									<g
+										transform="translate({xScale(
+											occ,
+										)}, {yScale(ageLabel)})"
+										role="button"
+										tabindex="0"
+										onmousemove={(e) =>
+											handleMouseMove(e, occ, ageLabel)}
+										onmouseleave={handleMouseLeave}
+										onclick={() =>
+											handleGlyphClick(occ, ageLabel)}
+										onkeydown={(e) =>
+											e.key === "Enter" &&
+											handleGlyphClick(occ, ageLabel)}
+										style="cursor: pointer;"
+									>
+										<circle r="25" fill="transparent" />
+										<circle
+											r={isHovered ? 3 : 2}
+											fill={isHovered
+												? "#e2e8f0"
+												: "#2d3748"}
+											style="transition: r 0.2s ease;"
+										/>
+
+										{#each glyphData[`${occ}|${ageLabel}`] as genreStat}
+											{#if genreStat.avg > 0}
+												<line
+													x1="0"
+													y1="0"
+													x2={glyphsAnimated
+														? Math.cos(
+																genreStat.angle,
+															) *
+															rScale(
+																genreStat.avg,
+															) *
+															(isHovered
+																? 1.5
+																: 1)
+														: 0}
+													y2={glyphsAnimated
+														? Math.sin(
+																genreStat.angle,
+															) *
+															rScale(
+																genreStat.avg,
+															) *
+															(isHovered
+																? 1.5
+																: 1)
+														: 0}
+													stroke={genreColors[
+														genreStat.genre
+													]}
+													stroke-width={isHovered
+														? 3.5
+														: 2.5}
+													stroke-linecap="round"
+													style="transition: x2 0.6s ease-out, y2 0.6s ease-out, stroke-width 0.2s ease;"
+												/>
+											{/if}
+										{/each}
+									</g>
+								{/if}
+							{/each}
+						{/each}
+					</g>
+				</svg>
+			</div>
 		</div>
-</div>
 
 		<div
 			class="legend-wrap"
@@ -373,6 +385,11 @@
 			<h3
 				style="color: #e2e8f0; margin-top: 0; margin-bottom: 24px; font-size: 16px; font-weight: 600;"
 			>
+				<p>
+					To see a glyph in more detail click on it, to filter by
+					occupation use the buttons on the left!
+				</p>
+				<br />
 				Genre Key
 			</h3>
 			<svg
@@ -424,7 +441,6 @@
 			</svg>
 		</div>
 	</div>
-	
 
 	{#if tooltipVisible && tooltipData}
 		<div class="tooltip" style="left: {tooltipX}px; top: {tooltipY}px">
@@ -455,12 +471,16 @@
 						<svg width="240" height="240">
 							<g transform="translate(120, 120)">
 								{#if selectedGlyphData.overallAvg > 0}
-									<circle 
-										r={rScale(selectedGlyphData.overallAvg) * 3 + 2.5} 
-										fill="none" 
-										stroke="#475569" 
-										stroke-width="1.5" 
-										stroke-dasharray="4 4" 
+									<circle
+										r={rScale(
+											selectedGlyphData.overallAvg,
+										) *
+											3 +
+											2.5}
+										fill="none"
+										stroke="#475569"
+										stroke-width="1.5"
+										stroke-dasharray="4 4"
 									/>
 								{/if}
 								<circle r="6" fill="#e2e8f0" />
@@ -501,8 +521,12 @@
 					</div>
 				</div>
 				{#if selectedGlyphData.overallAvg > 0}
-					<div style="margin-top: 24px; text-align: center; font-size: 13px; color: #94a3b8; font-style: italic;">
-						* The faint dotted circle indicates the overall average rating ({selectedGlyphData.overallAvg.toFixed(2)}) for this group.
+					<div
+						style="margin-top: 24px; text-align: center; font-size: 13px; color: #94a3b8; font-style: italic;"
+					>
+						* The faint dotted circle indicates the overall average
+						rating ({selectedGlyphData.overallAvg.toFixed(2)}) for
+						this group.
 					</div>
 				{/if}
 			</div>
