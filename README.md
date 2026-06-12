@@ -3,7 +3,7 @@
 **How does the demographic of users change how they watch movies?**
 
 A scrollytelling data story built for CSCI 5609 — Data Visualization, Spring 2026.  
-Live site: [ehtiram-shukurov.github.io/fp-vis](https://ehtiram-shukurov.github.io/fp-vis/)
+Live site: [ehtiram-shukurov.github.io/movie-ratings-scrollytelling](https://ehtiram-shukurov.github.io/movie-ratings-scrollytelling/)
 
 ---
 
